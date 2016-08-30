@@ -4,10 +4,10 @@ using System.Collections;
 public class CameraScript : MonoBehaviour {
 
     public GameObject player;
-    public float cameraDistance;
+    public float cameraDistance = 10;
 
     [Range(0, 1)]
-    public float smoothness;
+    public float smoothness = 0.95f;
 
 	void Start ()
     {
