@@ -54,9 +54,9 @@ namespace StateMachine
         public SquirrelState CurrentState { get; private set; }
         private SquirrelState OldState;
 
-        public SquirrelMachine()
+        public SquirrelMachine(SquirrelState startState)
         {
-            CurrentState = SquirrelState.idling;
+            CurrentState = startState;
             OldState = CurrentState;
 
             transitions = new Dictionary<StateTransition, SquirrelState>
