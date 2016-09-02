@@ -89,7 +89,7 @@ public class TmxObject : IComparable
         if (other != null)
             return this.Id.CompareTo(other.Id);
         else
-            throw new ArgumentException("Object is not a Temperature");
+            throw new ArgumentException("Other object is invalid");
     }
 }
 

@@ -10,27 +10,32 @@ public class LayeredTreeRenderer : MonoBehaviour
 
 	void Start ()
 	{
-	    _slices = new List<GameObject>();
+        //Keep empty!
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	
+
 	}
 
     public void Create(LayeredTreeData data)
     {
         _data = data;
+        _slices = new List<GameObject>();
 
-        foreach (var treeSlice in data.GetSlices())
+
+        for (int index = 0; index < _data.GetSlices().Count; index++)
         {
+
+            var treeSlice = _data.GetSlices()[index];
+
             GameObject slice = Instantiate(SliceRenderer,
-                    new Vector3(treeSlice.GetStartPos().x, treeSlice.GetStartPos().y, -treeSlice.GetSliceNum() * 20),
-                    Quaternion.identity) as GameObject;
+                new Vector3(0, 0, -treeSlice.GetSliceNum() * 20),
+                Quaternion.AngleAxis(180, Vector3.forward)) as GameObject;
 
             slice.SendMessage("Create", treeSlice);
-            //_slices.Add(slice);
+            _slices.Add(slice);
         }
     }
 }

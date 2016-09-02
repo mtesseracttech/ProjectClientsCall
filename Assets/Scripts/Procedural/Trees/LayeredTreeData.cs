@@ -66,7 +66,7 @@ public class LayeredTreeData
 
         for (int i = 0; i < input.Length; i++)
         {
-            if (Char.IsDigit(input[i]))
+            if (Char.IsDigit(input[i]) || i == '-')
                 outputString += input[i];
         }
 
@@ -86,18 +86,18 @@ public class LayeredTreeData
 
 public class TreeSlice
 {
-    private Vector2[] _vertexes;
-    private int _sliceNum;
-    private Vector2 _startPos;
+    private readonly Vector2[] _vertexes;
+    private readonly int _sliceNum;
+    private readonly Vector2 _startPos;
 
-    public TreeSlice(List<Vector2> vertexes, int layer, Vector2 position)
+    public TreeSlice(List<Vector2> vertices, int layer, Vector2 position)
     {
-        _vertexes = vertexes.ToArray();
+        _vertexes = vertices.ToArray();
         _sliceNum = layer;
         _startPos = position;
     }
 
-    public Vector2[] GetVertexes()
+    public Vector2[] GetVertices()
     {
         return _vertexes;
     }

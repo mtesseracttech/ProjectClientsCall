@@ -1,8 +1,6 @@
-﻿using System;
+﻿
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using Assets.Scripts.IO.Tiled;
 
 public class LevelBuilder : MonoBehaviour
@@ -23,7 +21,13 @@ public class LevelBuilder : MonoBehaviour
     {
         map = TmxReader.ReadLevel(TmxFile);
 
+        CreatePlatforms();
         CreateTrees();
+    }
+
+    private void CreatePlatforms()
+    {
+
     }
 
     private void CreateTrees()
@@ -46,19 +50,6 @@ public class LevelBuilder : MonoBehaviour
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     private void DebugLevel()
     {
         map.PrintInfo();
@@ -71,7 +62,7 @@ public class LevelBuilder : MonoBehaviour
             foreach (var slice in layeredTree.GetSlices())
             {
                 treeDebug += ("> TreeSlice: " + slice.GetSliceNum() +
-                          ", Slice Vertexes: " + slice.GetVertexes().Length +
+                          ", Slice Vertexes: " + slice.GetVertices().Length +
                           ", Starting Pos: " + slice.GetStartPos()+
                 "\n");
             }

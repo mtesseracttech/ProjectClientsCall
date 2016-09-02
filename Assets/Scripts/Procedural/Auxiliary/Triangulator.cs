@@ -27,14 +27,17 @@ public class Triangulator
         else
         {
             for (int v = 0; v < n; v++)
+            {
                 V[v] = (n - 1) - v;
+            }
+
         }
 
         int nv = n;
         int count = 2 * nv;
         for (int m = 0, v = nv - 1; nv > 2;)
         {
-            if ((count--) <= 0)
+            if (count-- <= 0)
                 return indices.ToArray();
 
             int u = v;
