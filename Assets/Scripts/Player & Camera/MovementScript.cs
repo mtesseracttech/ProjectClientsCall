@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using StateMachine;
+using System;
 
 public class MovementScript : MonoBehaviour {
 
@@ -26,43 +27,52 @@ public class MovementScript : MonoBehaviour {
 
         playerCollider = gameObject.GetComponent<BoxCollider>();
         moveDelegate += GroundMovement;
-	}
+        moveDelegate += CheckCollision;
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
+        // Reset acceleration and apply drag
+        acceleration = new Vector2();
+        velocity *= 0.9f;
+        //
+
         if (s.HasChanged() == true)
         {
+            moveDelegate = null;
             switch(s.CurrentState)
             {
                 case SquirrelState.running:
-                    print(true);
+                    moveDelegate += GroundMovement;
+                    moveDelegate += CheckCollision;
+                    break;
+
+                case SquirrelState.landing:
+                    moveDelegate += Land;
+                    break;
+
+                case SquirrelState.jumping:
+                    acceleration += new Vector2(0, jumpHeight);
+                    moveDelegate += AirMovement;
                     break;
             }
         }
+        if (moveDelegate != null)
+            moveDelegate();
 
-        moveDelegate();
-        CheckCollision();
-
+        // Apply physics to squirrel body
+        velocity += acceleration;
+        transform.position += new Vector3(velocity.x, velocity.y, 0);
+        //
     }
 
     void CheckCollision()
     {
-        Vector3 bottomRayPos = this.transform.up * playerCollider.size.y / 2;
+        RaycastHit frontHit = Raycast('f');
+        RaycastHit rearHit = Raycast('r');
 
-        Vector3 frontRayPos = this.transform.position + this.transform.right * (playerCollider.size.x / 2) - bottomRayPos;
-        Vector3 rearRayPos = this.transform.position - this.transform.right * (playerCollider.size.x / 2) - bottomRayPos;
-
-        Ray frontRay = new Ray(frontRayPos, -transform.up);
-        Ray rearRay = new Ray(rearRayPos, -transform.up);
-
-        Debug.DrawRay(rearRayPos, Vector3.down, Color.red);
-        Debug.DrawRay(frontRayPos, Vector3.down, Color.green);
-
-        RaycastHit frontHit;
-        RaycastHit rearHit;
-
-        if (Physics.Raycast(frontRay, out frontHit, floatHeight + maxHeightDifference) && Physics.Raycast(rearRay, out rearHit, floatHeight + maxHeightDifference))
+        if (frontHit.distance != 0 && rearHit.distance != 0)
         {
             transform.eulerAngles = new Vector3(0, 0, Mathf.Asin((frontHit.point.y - rearHit.point.y) / playerCollider.size.x) * Mathf.Rad2Deg);
 
@@ -70,16 +80,12 @@ public class MovementScript : MonoBehaviour {
             if ((currentHeight = (frontHit.distance + rearHit.distance) / 2) != floatHeight)
                 transform.position += (floatHeight - currentHeight) * transform.up;
         }
-
-
-        acceleration = new Vector2();
     }
 
 
-    void GroundMovement()
+    void AirMovement()
     {
-        acceleration = new Vector2();
-        velocity *= 0.9f;
+        acceleration -= new Vector2(0, gravity);
 
         if (Input.GetKey(KeyCode.A))
             acceleration -= new Vector2(speed, 0);
@@ -87,13 +93,70 @@ public class MovementScript : MonoBehaviour {
         if (Input.GetKey(KeyCode.D))
             acceleration += new Vector2(speed, 0);
 
-        if (Input.GetKey(KeyCode.W))
-            s.MoveNext(Key.up);
-        if (Input.GetKey(KeyCode.S))
+        transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg);
+
+        RaycastHit hit = Raycast('f');
+        if (hit.distance != 0 && hit.distance < floatHeight)
             s.MoveNext(Key.down);
 
-        velocity += acceleration;
+    }
 
-        transform.position += new Vector3(velocity.x, velocity.y, 0);
+    void Land()
+    {
+        RaycastHit frontHit = Raycast('f');
+        Vector2 normal = new Vector2(-frontHit.normal.y, frontHit.normal.x);
+
+        if (normal != new Vector2())
+        {
+            float slope = (Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg) % 360;
+            float steep = transform.eulerAngles.z % 360;
+
+            float difference = slope - steep;
+
+            transform.Rotate(0, 0, difference * 0.1f);
+            print(difference);
+            
+        }
+ 
+    }
+
+    void GroundMovement()
+    {
+        if (Input.GetKey(KeyCode.A))
+            acceleration -= new Vector2(speed, 0);
+
+        if (Input.GetKey(KeyCode.D))
+            acceleration += new Vector2(speed, 0);
+
+        if (Input.GetKeyDown(KeyCode.W))
+            s.MoveNext(Key.up);
+
+        if (Input.GetKey(KeyCode.S))
+            s.MoveNext(Key.down);
+    }
+
+    RaycastHit Raycast(char position)
+    {
+        RaycastHit hit;
+        Vector3 bottomPos = this.transform.up * playerCollider.size.y / 2;
+        Vector3 rayPos;
+        switch (position)
+        {
+            case 'r':
+                rayPos = this.transform.position - this.transform.right * (playerCollider.size.x / 2) - bottomPos;
+                Physics.Raycast(rayPos, Vector3.down, out hit);
+                return hit;
+
+            case 'm':
+                Physics.Raycast(bottomPos, Vector3.down, out hit);
+                return hit;
+
+            case 'f':
+                rayPos = this.transform.position + this.transform.right * (playerCollider.size.x / 2) - bottomPos;
+                Physics.Raycast(rayPos, Vector3.down, out hit);
+                return hit;
+        }
+
+        return new RaycastHit();
     }
 }

@@ -62,7 +62,8 @@ namespace StateMachine
             transitions = new Dictionary<StateTransition, SquirrelState>
             {
                 { new StateTransition(SquirrelState.idling, Key.up), SquirrelState.jumping },
-                { new StateTransition(SquirrelState.running, Key.up), SquirrelState.jumping }
+                { new StateTransition(SquirrelState.running, Key.up), SquirrelState.jumping },
+                { new StateTransition(SquirrelState.jumping, Key.down), SquirrelState.landing }
             };
         }
 
