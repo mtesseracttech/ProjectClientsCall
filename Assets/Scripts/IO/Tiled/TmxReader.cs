@@ -43,29 +43,6 @@ namespace Assets.Scripts.IO.Tiled
 
             return level;
         }
-
-        /*
-        public static void PrintTmxMapInfo(TmxMap map)
-        {
-            string DebugString = "TMX Map Info:\n";
-            DebugString += map.Name + "\n";
-            foreach (var layer in map.TmxObjectLayers)
-            {
-                DebugString += layer.Name + "\n"
-                               + "Number of Objects: " + layer.TmxObjects.Count() + "\n";
-                foreach (var tmxObject in layer.TmxObjects)
-                {
-                    DebugString
-                        += "ObjectName: " + tmxObject.Name + "\n"
-                        +  "Object ID: " + tmxObject.Id + "\n"
-                        +  "Object Position: " + tmxObject.X + "," + tmxObject.Y + "\n"
-                        +  "Object Size: " + tmxObject.Width + "," + tmxObject.Height;
-
-                }
-            }
-            Debug.Log(DebugString);
-        }
-        */
     }
 
 

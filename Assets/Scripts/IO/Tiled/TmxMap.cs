@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -13,21 +14,21 @@ public class TmxMap
 
     public void PrintInfo()
     {
-        string DebugString = "TMX Map Info:\n";
-        DebugString += Name + "\n";
+        string debugString = "TMX Map Info:\n";
+        debugString += Name + "\n";
         foreach (var layer in TmxObjectLayers)
         {
-            DebugString
+            debugString
                 += layer.Name + "\n"
                 + "Layer Depth: " + layer.Depth + "\n"
                 + "Number of Objects: ";
 
             if (layer.TmxObjects != null)
             {
-                DebugString += layer.TmxObjects.Length + "\n\n";
+                debugString += layer.TmxObjects.Length + "\n\n";
                 foreach (var tmxObject in layer.TmxObjects)
                 {
-                    DebugString
+                    debugString
                         += "Object Name: " + tmxObject.Name + "\n"
                            + "Object ID: " + tmxObject.Id + "\n"
                            + "Object Position: " + tmxObject.X + "," + tmxObject.Y + "\n"
@@ -36,10 +37,10 @@ public class TmxMap
             }
             else
             {
-                DebugString += 0 + "\n\n";
+                debugString += 0 + "\n\n";
             }
         }
-        Debug.Log(DebugString);
+        Debug.Log(debugString);
     }
 }
 
@@ -57,7 +58,7 @@ public class TmxObjectLayer
 }
 
 [XmlRootAttribute("object")]
-public class TmxObject
+public class TmxObject : IComparable
 {
     [XmlAttribute("id")]
     public int Id = 0;
@@ -77,6 +78,26 @@ public class TmxObject
     [XmlAttribute("height")]
     public float Height = 0.0f;
 
+    [XmlElement("polygon")]
+    public Polygon Poly;
+
+
+    public int CompareTo(object obj)
+    {
+        if (obj == null) return 1;
+        TmxObject other = obj as TmxObject;
+        if (other != null)
+            return this.Id.CompareTo(other.Id);
+        else
+            throw new ArgumentException("Other object is invalid");
+    }
+}
+
+[XmlRootAttribute("polygon")]
+public class Polygon
+{
+    [XmlAttribute("points")]
+    public string Points;
 }
 
 
