@@ -40,6 +40,7 @@ public class DayNightCycle : MonoBehaviour
     
     public Vector3 oldPosition = new Vector3();
     public Vector3 sunposition;
+
     void Start()
     {
         mainLight = GetComponent<Light>();

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Specialized;
+using Assets.Scripts.IO.Settings;
 using JetBrains.Annotations;
 
 public class SettingManager : MonoBehaviour
@@ -90,7 +91,7 @@ public class SettingManager : MonoBehaviour
         {
             _settings = new GameSettings();
             _settings.PlayerSettings = new PlayerSettings();
-            _settings.DayNightCycle = new DayNightCycle();
+            _settings.DayNightCycleSettings = new DayNightCycleSettings();
         }
 
         _settings.PlayerSettings.JumpingHeight = 1;
@@ -99,7 +100,8 @@ public class SettingManager : MonoBehaviour
         _settings.PlayerSettings.Gravity = 1;
         _settings.PlayerSettings.AirDrag = 1;
 
-        _settings.DayNightCycle.DaySpeed = 1;
-        _settings.DayNightCycle.NightSpeed = 1;
+
+        _settings.DayNightCycleSettings.DaySpeed = 1;
+        _settings.DayNightCycleSettings.NightSpeed = 1;
     }
 }
