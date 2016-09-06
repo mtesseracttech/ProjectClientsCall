@@ -5,11 +5,20 @@ using System;
 
 public class MovementScript : MonoBehaviour {
 
+    public enum Orientation
+    {
+        down,
+        left,
+        right
+    }
+
     public float speed;
     public float floatHeight;
     public float gravity;
     public float jumpHeight;
     public float maxHeightDifference;
+
+    public Orientation orientation;
 
     private SquirrelMachine s;
 
@@ -24,6 +33,8 @@ public class MovementScript : MonoBehaviour {
 	void Start () {
 
         s = new SquirrelMachine(SquirrelState.idling);
+
+        orientation = Orientation.down;
 
         playerCollider = gameObject.GetComponent<BoxCollider>();
         moveDelegate += GroundMovement;
@@ -67,76 +78,58 @@ public class MovementScript : MonoBehaviour {
         //
     }
 
-    void CheckCollision()
-    {
-        RaycastHit frontHit = Raycast('f');
-        RaycastHit rearHit = Raycast('r');
-
-        if (frontHit.distance != 0 && rearHit.distance != 0)
-        {
-            transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(frontHit.point.y - rearHit.point.y, frontHit.point.x - rearHit.point.x) * Mathf.Rad2Deg);
-
-            frontHit = Raycast('f');
-            rearHit = Raycast('r');
-
-            float currentHeight = (frontHit.distance + rearHit.distance) / 2;
-            if (currentHeight != floatHeight)
-                transform.position += (floatHeight - currentHeight) * Vector3.up;
-        }
-    }
-
 
     void AirMovement()
     {
-        acceleration -= new Vector2(0, gravity);
+        //acceleration -= new Vector2(0, gravity);
 
-        if (Input.GetKey(KeyCode.A))
-            acceleration -= new Vector2(speed, 0);
+        //if (Input.GetKey(KeyCode.A))
+        //    acceleration -= new Vector2(speed, 0);
 
-        if (Input.GetKey(KeyCode.D))
-            acceleration += new Vector2(speed, 0);
+        //if (Input.GetKey(KeyCode.D))
+        //    acceleration += new Vector2(speed, 0);
 
-        transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg);
+        //transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg);
 
-        RaycastHit hit = Raycast('f');
+        //RaycastHit hit = Raycast('f');
 
-        if (velocity.y < 0 && hit.distance != 0 && hit.distance < 2 * floatHeight)
-            s.MoveNext(Key.down);
+        //if (velocity.y < 0 && hit.distance != 0 && hit.distance < 2 * floatHeight)
+        //    s.MoveNext(Key.down);
 
     }
 
     void Land()
     {
-        RaycastHit frontHit = Raycast('f');
-        RaycastHit rearHit = Raycast('r');
+        //RaycastHit frontHit = Raycast('f');
+        //RaycastHit rearHit = Raycast('r');
 
-        Vector2 normal = new Vector2(frontHit.normal.y, -frontHit.normal.x);
+        //Vector2 normal = new Vector2(frontHit.normal.y, -frontHit.normal.x);
 
-        if (normal != new Vector2())
-        {
-            float slope = (Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg) % 360;
-            float steep = transform.eulerAngles.z % 360;
+        //if (normal != new Vector2())
+        //{
+        //    float slope = (Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg) % 360;
+        //    float steep = transform.eulerAngles.z % 360;
 
-            float angleDif = (slope - steep) % 360;
+        //    float angleDif = (slope - steep) % 360;
 
-            if (angleDif < -180)
-                angleDif += 360;
+        //    if (angleDif < -180)
+        //        angleDif += 360;
 
-            transform.Rotate(0, 0, angleDif * 0.1f);
+        //    transform.Rotate(0, 0, angleDif * 0.1f);
 
-            if (Input.GetKey(KeyCode.A))
-                acceleration -= new Vector2(speed, 0);
+        //    if (Input.GetKey(KeyCode.A))
+        //        acceleration -= new Vector2(speed, 0);
 
-            if (Input.GetKey(KeyCode.D))
-                acceleration += new Vector2(speed, 0);
+        //    if (Input.GetKey(KeyCode.D))
+        //        acceleration += new Vector2(speed, 0);
 
-            float currentHeight = (frontHit.distance + rearHit.distance) / 2;
-            if (currentHeight != floatHeight)
-                transform.position += ((floatHeight - currentHeight) * frontHit.normal) * 0.2f;
+        //    float currentHeight = (frontHit.distance + rearHit.distance) / 2;
+        //    if (currentHeight != floatHeight)
+        //        transform.position += ((floatHeight - currentHeight) * frontHit.normal) * 0.2f;
 
-            if (Mathf.Abs(angleDif) < 0.5f && Mathf.Abs(currentHeight - floatHeight) < 0.05f)
-                s.MoveNext(Key.down);
-        }
+        //    if (Mathf.Abs(angleDif) < 0.5f && Mathf.Abs(currentHeight - floatHeight) < 0.05f)
+        //        s.MoveNext(Key.down);
+        //}
  
     }
 
@@ -155,33 +148,110 @@ public class MovementScript : MonoBehaviour {
             s.MoveNext(Key.down);
     }
 
-    RaycastHit Raycast(char position)
+
+    void CheckCollision()
     {
-        RaycastHit hit;
-        Vector3 bottomPos = this.transform.up * playerCollider.size.y / 2;
-        Vector3 rayPos;
+        Vector3 bottomPos = this.transform.up * transform.localScale.y / 2;
+        Vector3 rayOrientation = new Vector3();
 
-        switch (position)
+        switch (orientation)
         {
-            case 'r':
-                rayPos = this.transform.position - this.transform.right * (playerCollider.size.x / 2) - bottomPos;
-                Physics.Raycast(rayPos, Vector3.down, out hit);
-                Debug.DrawRay(rayPos, Vector3.down);
-                return hit;
+            case Orientation.down:
+                rayOrientation = Vector3.down;
+                break;
 
-            case 'm':
-                Physics.Raycast(bottomPos, Vector3.down, out hit);
-                return hit;
+            case Orientation.right:
+                rayOrientation = Vector3.left;
+                break;
 
-            case 'f':
-                rayPos = this.transform.position + this.transform.right * (playerCollider.size.x / 2) - bottomPos;
-                Physics.Raycast(rayPos, Vector3.down, out hit);
-                Debug.DrawRay(rayPos, Vector3.down);
-                return hit;
+            case Orientation.left:
+                rayOrientation = Vector3.right;
+                break;
         }
 
-        return new RaycastHit();
+        /// Calculate points -----------------------------------
+        // Front
+        RaycastHit frontHit;
+        Vector3 frontRayPos = this.transform.position + this.transform.right * (transform.localScale.x / 2) - bottomPos;
+        Physics.Raycast(frontRayPos, rayOrientation, out frontHit);
+        Debug.DrawRay(frontRayPos, rayOrientation);
+        //
+
+        //Rear
+        RaycastHit rearHit;
+        Vector3 rearRayPos = this.transform.position - this.transform.right * (transform.localScale.x / 2) - bottomPos;
+        Physics.Raycast(rearRayPos, -transform.up, out rearHit);
+        Debug.DrawRay(rearRayPos, -transform.up);
+        //
+        /// ----------------------------------------------------
+
+
+        //Check current side
+        Orientation frontOrientation = CheckSide(frontHit);
+        Orientation rearOrientation = CheckSide(rearHit);
+
+
+        /// check if the player is on 1 platform ---------------
+        RaycastHit extraHit;
+        Physics.Raycast(frontRayPos, new Vector3(-rayOrientation.y, rayOrientation.x, 0), out extraHit, floatHeight);
+
+        if (frontOrientation == rearOrientation || extraHit.distance != 0 && CheckSide(extraHit) == rearOrientation)
+        {
+            orientation = rearOrientation;
+        }
+        /// ----------------------------------------------------
+
+
+        /// Check if near inside corner ------------------------
+        Debug.DrawRay(frontRayPos, new Vector3(-rayOrientation.y, rayOrientation.x, 0), Color.green);
+        if (Physics.Raycast(frontRayPos, new Vector3(-rayOrientation.y, rayOrientation.x, 0), floatHeight -0.1f)) //0.1f has to be replaced
+        {
+            rayOrientation = (rayOrientation + new Vector3(-rayOrientation.y, rayOrientation.x)).normalized;
+            Physics.Raycast(frontRayPos, rayOrientation, out frontHit);
+            Debug.DrawRay(frontRayPos, rayOrientation, Color.red);
+        }
+
+        if (frontHit.distance > 1.5f * floatHeight)
+        {
+            Physics.Raycast(frontRayPos, new Vector3(rayOrientation.y, -rayOrientation.x), out frontHit);
+            rayOrientation = new Vector3(rayOrientation.y, -rayOrientation.x);
+            Debug.DrawRay(frontRayPos, new Vector3(rayOrientation.y, -rayOrientation.x), Color.yellow);
+            print(true);
+
+        }
+
+        if (frontHit.distance != 0 && rearHit.distance != 0)
+            transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(frontHit.point.y - rearHit.point.y, frontHit.point.x - rearHit.point.x) * Mathf.Rad2Deg);
+
+
+        Physics.Raycast(frontRayPos, rayOrientation, out frontHit);
+        Physics.Raycast(rearRayPos, -transform.up, out rearHit);
+
+        float currentHeight = (frontHit.distance + rearHit.distance) / 2;
+        if (currentHeight != floatHeight)
+            transform.position += (floatHeight - currentHeight) * -rayOrientation;
     }
 
 
+
+    Orientation CheckSide(RaycastHit hit)
+    {
+        float slopeNormal = Mathf.Atan2(hit.normal.y, hit.normal.x) * Mathf.Rad2Deg;
+
+        if (slopeNormal >= 45 && slopeNormal < 135)
+        {
+            return Orientation.down;
+        }
+        if (slopeNormal >= 135 && slopeNormal < 225)
+        {
+            return Orientation.left;
+        }
+        else if (slopeNormal < 45)
+        {
+            return Orientation.right;
+        }
+
+        print(slopeNormal);
+        return Orientation.down;
+    }
 }
