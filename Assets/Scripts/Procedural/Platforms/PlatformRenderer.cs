@@ -7,6 +7,7 @@ using System.Linq;
 public class PlatformRenderer : MonoBehaviour
 {
     private PlatformData _data;
+    public Material PlatformMaterial;
 
     public void Create(PlatformData data)
     {
@@ -42,8 +43,11 @@ public class PlatformRenderer : MonoBehaviour
         Mesh meshBack = CreateMesh(verticesBack, 1000);
         meshBack.triangles = meshBack.triangles.Reverse().ToArray();
 
+        //Between
 
-        Mesh meshBetween = CreateBetweenMesh(meshFront.vertices, meshBack.vertices);
+        Mesh meshBetween = CreateBetweenMesh(meshFront.vertices);
+
+        //Stitching
 
         Mesh meshFinal = MeshHelper.CombineMeshes(new Mesh[] {meshFront, meshBack, meshBetween});
 
@@ -51,7 +55,6 @@ public class PlatformRenderer : MonoBehaviour
         verticesFinal.AddRange(meshFront.vertices);
         verticesFinal.AddRange(meshBack.vertices);
         verticesFinal.AddRange(meshBetween.vertices);
-
 
         meshFinal.vertices = verticesFinal.ToArray();
 
@@ -62,64 +65,34 @@ public class PlatformRenderer : MonoBehaviour
         gameObject.AddComponent(typeof(MeshRenderer));
         MeshFilter filter = gameObject.AddComponent(typeof(MeshFilter)) as MeshFilter;
         filter.mesh = meshFinal;
+        GetComponent<MeshRenderer>().material = PlatformMaterial;
     }
 
-    private Mesh CreateBetweenMesh(Vector3[] frontVertices, Vector3[] backVertices)
+
+    private Mesh CreateBetweenMesh(Vector3[] frontVertices)
     {
-        /*
         List<Vector3> vertices = new List<Vector3>();
-
-        for (int i = 0; i < frontVertices.Length; i++)
-        {
-            vertices.Add(new Vector3(frontVertices[i].x, frontVertices[i].y, frontVertices[i].z));
-            vertices.Add(new Vector3(backVertices[i].x , backVertices[i].y , backVertices[i].z ));
-        }
-
         List<int> indices = new List<int>();
-        int limit = frontVertices.Length - 1;
-        for (int i = 0; i < vertices.Count; i+=2)
-        {
-            try
-            {
-                indices.AddRange(Converter.QuadToTri(
-                    (i)%limit,
-                    (i + 1)%limit,
-                    (i + frontVertices.Length + 1)%limit,
-                    (i + frontVertices.Length)%limit
-                ));
-            }
-            catch (Exception)
-            {
-            }
-        }
 
-        Mesh mesh = new Mesh();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = indices.ToArray();
-
-        mesh.RecalculateBounds();
-        mesh.RecalculateNormals();
-
-        return mesh;
-
-        */
-
-        List<Vector3> vertices = new List<Vector3>();
         vertices.AddRange(frontVertices);
-        vertices.AddRange(backVertices);
 
-        List<int> indices = new List<int>();
+        foreach (Vector3 fV in frontVertices)
+        {
+            vertices.Add(new Vector3(fV.x, fV.y, fV.z + 1000)); // is the offset
+        }
+        //vertices.AddRange(backVertices);
+
+
         int lim = vertices.Count;
-        for (int i = 0; i < frontVertices.Length; i++)
+        int offs = frontVertices.Length;
+        for (int i = 0; i < frontVertices.Length -1; i++)
         {
             indices.AddRange(Converter.QuadToTri(
-            (i+0) % lim,
-            (i+1) % lim,
-            (i + frontVertices.Length + 1) % lim,
-            (i + frontVertices.Length + 0) % lim)
-            );
+                    i, i+offs, i + 1 + offs, i+1
+            ));
         }
-
+        indices.AddRange(Converter.QuadToTri(frontVertices.Length - 1, frontVertices.Length - 1 + frontVertices.Length,
+            frontVertices.Length, 0 ));
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -155,33 +128,11 @@ public class PlatformRenderer : MonoBehaviour
     }
 
 
-
-
-
-
-
-
-
-
-
     // Update is called once per frame
     void Update()
     {
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private void DebugArray(Vector2[] array)
