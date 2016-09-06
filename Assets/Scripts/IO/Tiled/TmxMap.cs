@@ -6,11 +6,26 @@ using UnityEngine;
 [XmlRootAttribute("map")]
 public class TmxMap
 {
-    [XmlElement("name")]
+    [XmlAttribute("name")]
     public string Name;
+
+    [XmlAttribute("width")]
+    public int Width;
+
+    [XmlAttribute("height")]
+    public int Height;
+
+    [XmlAttribute("tilewidth")]
+    public int TileWidth;
+
+    [XmlAttribute("tileheight")]
+    public int TileHeight;
 
     [XmlElement("objectgroup")]
     public TmxObjectLayer[] TmxObjectLayers;
+
+
+
 
     public void PrintInfo()
     {
@@ -19,7 +34,7 @@ public class TmxMap
         foreach (var layer in TmxObjectLayers)
         {
             debugString
-                += layer.Name + "\n"
+                +="Layer Name:" + layer.Name + "\n"
                 + "Layer Depth: " + layer.Depth + "\n"
                 + "Number of Objects: ";
 
