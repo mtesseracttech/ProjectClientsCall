@@ -166,6 +166,12 @@ public class PlatformRenderer : MonoBehaviour
         return msh;
     }
 
+    public PlatformData GetData()
+    {
+        return _data;
+    }
+
+
 
     // Update is called once per frame
     void Update()

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Assets.Scripts.IO.Tiled;
+using Assets.Scripts.Procedural.Trees;
 
 public class LevelBuilder : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class LevelBuilder : MonoBehaviour
 
     private TmxMap map;
     private List<GameObject> _trees;
+    private List<TreeData> _treesData;
+    private List<GameObject> _acorns;
     private List<GameObject> _platforms;
     private List<PlatformData> _platformsData;
     private Vector2 _mapSize;
@@ -53,7 +56,7 @@ public class LevelBuilder : MonoBehaviour
             Debug.Log(_mapSize);
 
             if(PlatformRenderer != null) CreatePlatforms();
-            else Debug.Log("No platformrenderer was specified!");
+            else Debug.Log("No PlatformRenderer was specified!");
 
             if(TreePrefab != null) CreateTrees();
             else Debug.Log("No Tree prefab was specified!");
@@ -65,7 +68,7 @@ public class LevelBuilder : MonoBehaviour
 
     private void CreateAcorns()
     {
-        _trees = new List<GameObject>();
+        _acorns = new List<GameObject>();
 
         foreach (var layer in map.TmxObjectLayers)
         {
@@ -78,7 +81,7 @@ public class LevelBuilder : MonoBehaviour
                     {
                         Vector3 acornPos = new Vector3(acorn.X, acorn.Y, 5);
                         GameObject instantiatedTree = Instantiate(AcornPrefab, acornPos, Quaternion.identity) as GameObject;
-                        _trees.Add(instantiatedTree);
+                        _acorns.Add(instantiatedTree);
                     }
                 }
             }
@@ -89,6 +92,7 @@ public class LevelBuilder : MonoBehaviour
     {
         //Adding rotation would require splicing up data into treeData to keep things clean
         _trees = new List<GameObject>();
+        _treesData = new List<TreeData>();
 
         foreach (var layer in map.TmxObjectLayers)
         {
@@ -100,12 +104,16 @@ public class LevelBuilder : MonoBehaviour
                 {
                     foreach (var tree in layer.TmxObjects)
                     {
-                        Vector3 treePos = new Vector3(tree.X, tree.Y, layerNumber + 1 * 10);
-                        GameObject instantiatedTree = Instantiate(TreePrefab, treePos, Quaternion.identity) as GameObject;
-                        _trees.Add(instantiatedTree);
+                        _treesData.Add(new TreeData(tree, layerNumber));
                     }
                 }
             }
+        }
+
+        foreach (var treeData in _treesData)
+        {
+            GameObject instantiatedTree = Instantiate(TreePrefab, treeData.GetPosition(), treeData.GetRotation()) as GameObject;
+            _trees.Add(instantiatedTree);
         }
     }
 
