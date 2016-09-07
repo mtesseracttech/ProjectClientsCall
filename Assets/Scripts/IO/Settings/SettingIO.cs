@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Assets.Scripts.IO.Settings;
 using UnityEngine;
 
 public class SettingsIO
