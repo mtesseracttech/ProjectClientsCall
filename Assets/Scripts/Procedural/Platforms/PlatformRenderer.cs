@@ -29,7 +29,7 @@ public class PlatformRenderer : MonoBehaviour
 
         Mesh meshFront = CreateMesh(verticesFront);
 
-        Debug.Log(meshFront);
+        //Debug.Log(meshFront);
 
         //Back
 
@@ -126,8 +126,8 @@ public class PlatformRenderer : MonoBehaviour
 
         List<Vector2> finalUVs = new List<Vector2>();
 
-        MeshHelper.DebugArray(finalVertices.ToArray());
-        MeshHelper.DebugArray(finalIndices.ToArray());
+        //MeshHelper.DebugArray(finalVertices.ToArray());
+        //MeshHelper.DebugArray(finalIndices.ToArray());
 
         Mesh mesh = new Mesh();
         mesh.vertices = finalVertices.ToArray();

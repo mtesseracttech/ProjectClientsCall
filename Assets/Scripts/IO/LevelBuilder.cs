@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Assets.Scripts.IO.Tiled;
 
 public class LevelBuilder : MonoBehaviour
@@ -13,6 +14,9 @@ public class LevelBuilder : MonoBehaviour
     [Header("Renderer GameObjects")]
     public GameObject PlatformRenderer;
 
+    [Header("Prefabs")]
+    public GameObject TreePrefab;
+    public GameObject AcornPrefab;
 
     private TmxMap map;
     private List<GameObject> _trees;
@@ -48,7 +52,60 @@ public class LevelBuilder : MonoBehaviour
             _mapSize = new Vector2(map.Width * map.TileWidth, map.Height * map.TileHeight);
             Debug.Log(_mapSize);
 
-            CreatePlatforms();
+            if(PlatformRenderer != null) CreatePlatforms();
+            else Debug.Log("No platformrenderer was specified!");
+
+            if(TreePrefab != null) CreateTrees();
+            else Debug.Log("No Tree prefab was specified!");
+
+            if(AcornPrefab != null) CreateAcorns();
+            else Debug.Log("No Acorn Prefab was specified!");
+        }
+    }
+
+    private void CreateAcorns()
+    {
+        _trees = new List<GameObject>();
+
+        foreach (var layer in map.TmxObjectLayers)
+        {
+            string name = layer.Name;
+            if (name.Contains("acorns"))
+            {
+                if (layer.TmxObjects != null)
+                {
+                    foreach (var acorn in layer.TmxObjects)
+                    {
+                        Vector3 acornPos = new Vector3(acorn.X, acorn.Y, 5);
+                        GameObject instantiatedTree = Instantiate(AcornPrefab, acornPos, Quaternion.identity) as GameObject;
+                        _trees.Add(instantiatedTree);
+                    }
+                }
+            }
+        }
+    }
+
+    private void CreateTrees()
+    {
+        //Adding rotation would require splicing up data into treeData to keep things clean
+        _trees = new List<GameObject>();
+
+        foreach (var layer in map.TmxObjectLayers)
+        {
+            string name = layer.Name;
+            if (name.Contains("treelayer"))
+            {
+                int layerNumber = TiledParsingHelper.RetrieveNumFromString(name);
+                if (layer.TmxObjects != null)
+                {
+                    foreach (var tree in layer.TmxObjects)
+                    {
+                        Vector3 treePos = new Vector3(tree.X, tree.Y, layerNumber + 1 * 10);
+                        GameObject instantiatedTree = Instantiate(TreePrefab, treePos, Quaternion.identity) as GameObject;
+                        _trees.Add(instantiatedTree);
+                    }
+                }
+            }
         }
     }
 

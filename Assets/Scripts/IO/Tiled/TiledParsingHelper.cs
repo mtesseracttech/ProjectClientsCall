@@ -29,4 +29,26 @@ public class TiledParsingHelper
 
         return vertices.ToArray();
     }
+
+    public static int RetrieveNumFromString(string input)
+    {
+        string outputString = string.Empty;
+        int val;
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            if (Char.IsDigit(input[i]) || i == '-')
+                outputString += input[i];
+        }
+
+        if (outputString.Length > 0)
+        {
+            val = int.Parse(outputString);
+        }
+        else
+        {
+            throw new Exception("No valid number was found in " + input);
+        }
+        return val;
+    }
 }
