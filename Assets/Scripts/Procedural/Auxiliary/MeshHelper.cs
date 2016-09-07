@@ -43,12 +43,12 @@ public class MeshHelper
         vertices.Add(new Vector3(1, 0, 1));
 
         List<int> indices = new List<int>();
-        indices.AddRange(Converter.QuadToTri(0, 1, 2, 3)); //front
-        indices.AddRange(Converter.QuadToTri(7, 6, 5, 4)); //back
-        indices.AddRange(Converter.QuadToTri(0, 3, 7, 4)); //bottom
-        indices.AddRange(Converter.QuadToTri(1, 5, 6, 2)); //top
-        indices.AddRange(Converter.QuadToTri(0, 4, 5, 1)); //left
-        indices.AddRange(Converter.QuadToTri(3, 2, 6, 7)); //right
+        indices.AddRange(MeshConverter.QuadToTri(0, 1, 2, 3)); //front
+        indices.AddRange(MeshConverter.QuadToTri(7, 6, 5, 4)); //back
+        indices.AddRange(MeshConverter.QuadToTri(0, 3, 7, 4)); //bottom
+        indices.AddRange(MeshConverter.QuadToTri(1, 5, 6, 2)); //top
+        indices.AddRange(MeshConverter.QuadToTri(0, 4, 5, 1)); //left
+        indices.AddRange(MeshConverter.QuadToTri(3, 2, 6, 7)); //right
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -58,5 +58,28 @@ public class MeshHelper
         mesh.RecalculateNormals();
 
         return mesh;
+    }
+
+
+    public static void DebugArray<T>(T[] array)
+    {
+        if (array == null)
+        {
+            Debug.Log("Array is null");
+        }
+        else if (array.Length < 1)
+        {
+            Debug.Log("Array is null");
+        }
+        else
+        {
+            string debugString = "Array Debug\n";
+            foreach (var o in array)
+            {
+                debugString += o + "\n";
+            }
+
+            Debug.Log(debugString);
+        }
     }
 }

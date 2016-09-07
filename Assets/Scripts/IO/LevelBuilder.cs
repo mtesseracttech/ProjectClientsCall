@@ -70,7 +70,7 @@ public class LevelBuilder : MonoBehaviour
 
         foreach (var platformData in _platformsData)
         {
-            Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + _mapSize.y, 0);
+            Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + _mapSize.y, platformData.GetScreenOffSet());
             GameObject platform = Instantiate(PlatformRenderer, platformPosition, Quaternion.identity) as GameObject;
             platform.SendMessage("Create", platformData);
             _platforms.Add(platform);

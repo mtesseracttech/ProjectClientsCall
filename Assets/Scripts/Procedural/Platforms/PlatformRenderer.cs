@@ -40,12 +40,13 @@ public class PlatformRenderer : MonoBehaviour
             verticesBack[i] = new Vector2(verticesFront[verticesBack.Length - i -1].x, verticesFront[verticesBack.Length - i -1].y);
         }
 
-        Mesh meshBack = CreateMesh(verticesBack, 1000);
+
+        Mesh meshBack = CreateMesh(verticesBack, _data.GetDepth());
         meshBack.triangles = meshBack.triangles.Reverse().ToArray();
 
         //Between
 
-        Mesh meshBetween = CreateBetweenMesh(meshFront.vertices);
+        Mesh meshBetween = CreateBetweenMesh(meshFront.vertices, _data.GetDepth());
 
         //Stitching
 
@@ -69,46 +70,84 @@ public class PlatformRenderer : MonoBehaviour
     }
 
 
-    private Mesh CreateBetweenMesh(Vector3[] frontVertices)
+
+    //Creates a mesh from the front vertices to an offset, intended to connect the front vertices to the back vertices
+    private Mesh CreateBetweenMesh(Vector3[] frontVertices, int offsetDepth)
     {
         List<Vector3> vertices = new List<Vector3>();
         List<int> indices = new List<int>();
 
         vertices.AddRange(frontVertices);
 
+        //Creating the back vertices
         foreach (Vector3 fV in frontVertices)
         {
-            vertices.Add(new Vector3(fV.x, fV.y, fV.z + 1000)); // is the offset
+            vertices.Add(new Vector3(fV.x, fV.y, fV.z + offsetDepth)); // is the offset
         }
-        //vertices.AddRange(backVertices);
 
+        //Creating the indices from quads
+        //TODO : Creating new vertices for every quad
 
-        int lim = vertices.Count;
         int offs = frontVertices.Length;
         for (int i = 0; i < frontVertices.Length -1; i++)
         {
-            indices.AddRange(Converter.QuadToTri(
+            indices.AddRange(MeshConverter.QuadToTri(
                     i, i+offs, i + 1 + offs, i+1
             ));
         }
-        indices.AddRange(Converter.QuadToTri(frontVertices.Length - 1, frontVertices.Length - 1 + frontVertices.Length,
+
+        indices.AddRange(MeshConverter.QuadToTri(frontVertices.Length - 1, frontVertices.Length - 1 + frontVertices.Length,
             frontVertices.Length, 0 ));
+        
+
+
+        //Implementation for proper defined meshes
+        List < Vector3 > finalVertices = new List<Vector3>();
+        List<int> finalIndices = new List<int>();
+
+        int finalIndiceIterator = 0;
+
+        for (int i = 0; i < frontVertices.Length - 1; i++)
+        {
+            finalVertices.Add(new Vector3(vertices[i].x, vertices[i].y, vertices[i].z));
+            finalVertices.Add(new Vector3(vertices[i + offs].x, vertices[i + offs].y, vertices[i + offs].z));
+            finalVertices.Add(new Vector3(vertices[i + 1 + offs].x, vertices[i + 1 + offs].y, vertices[i + 1 + offs].z));
+            finalVertices.Add(new Vector3(vertices[i + 1].x, vertices[i + 1].y, vertices[i + 1].z));
+
+            finalIndices.AddRange(MeshConverter.QuadToTri(finalIndiceIterator++, finalIndiceIterator++, finalIndiceIterator++, finalIndiceIterator++));
+        }
+
+        finalVertices.Add(new Vector3(vertices[frontVertices.Length - 1].x, vertices[frontVertices.Length - 1].y, vertices[frontVertices.Length - 1].z));
+        finalVertices.Add(new Vector3(vertices[frontVertices.Length - 1 + frontVertices.Length].x, vertices[frontVertices.Length - 1 + frontVertices.Length].y, vertices[frontVertices.Length - 1 + frontVertices.Length].z));
+        finalVertices.Add(new Vector3(vertices[frontVertices.Length].x, vertices[frontVertices.Length].y, vertices[frontVertices.Length].z));
+        finalVertices.Add(new Vector3(vertices[0].x, vertices[0].y, vertices[0].z));
+
+        finalIndices.AddRange(MeshConverter.QuadToTri(finalIndiceIterator++, finalIndiceIterator++, finalIndiceIterator++, finalIndiceIterator++));
+
+        List<Vector2> finalUVs = new List<Vector2>();
+
+        MeshHelper.DebugArray(finalVertices.ToArray());
+        MeshHelper.DebugArray(finalIndices.ToArray());
 
         Mesh mesh = new Mesh();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = indices.ToArray();
+        mesh.vertices = finalVertices.ToArray();
+        mesh.triangles = finalIndices.ToArray();
+        //mesh.vertices = vertices.ToArray();
+        //mesh.triangles = indices.ToArray();
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
-
         return mesh;
     }
+
+
 
     private Mesh CreateMesh(Vector2[] vertices2D, int depth = 0)
     {
         // Use the triangulator to get triangles
         Triangulator tr = new Triangulator(vertices2D);
         int[] triangles = tr.Triangulate();
+
 
         // Create the Vector3 vertices
         Vector3[] vertices = new Vector3[vertices2D.Length];
@@ -132,60 +171,5 @@ public class PlatformRenderer : MonoBehaviour
     void Update()
     {
 
-    }
-
-
-    private void DebugArray(Vector2[] array)
-    {
-        if (array == null && array.Length < 1)
-        {
-            Debug.Log("array is empty/null");
-        }
-        else
-        {
-            string debugString = "Array Debug\n";
-            foreach (var o in array)
-            {
-                debugString += o;
-            }
-
-            Debug.Log(debugString);
-        }
-    }
-
-    private void DebugArray(Vector3[] array)
-    {
-        if (array == null && array.Length < 1)
-        {
-            Debug.Log("array is empty/null");
-        }
-        else
-        {
-            string debugString = "Array Debug\n";
-            foreach (var o in array)
-            {
-                debugString += o;
-            }
-
-            Debug.Log(debugString);
-        }
-    }
-
-    private void DebugArray(int[] array)
-    {
-        if (array == null && array.Length < 1)
-        {
-            Debug.Log("array is empty/null");
-        }
-        else
-        {
-            string debugString = "Array Debug\n";
-            foreach (var o in array)
-            {
-                debugString += o;
-            }
-
-            Debug.Log(debugString);
-        }
     }
 }

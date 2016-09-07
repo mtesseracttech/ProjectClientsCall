@@ -45,14 +45,24 @@ public class SettingManager : MonoBehaviour
 	        message += problems;
 	        message += "Saving settings is not supported because of undefined variables";
 	    }
+	    else
+	    {
+	        message += "Working!";
+	    }
 	    Debug.Log(message);
 
-	}
+        GameSettings temp = SettingsIO.ReadSettingsFromFile("GameSettings.xml");
+        if (temp != null)
+        {
+            _settings = temp;
+        }
+        SetSettings();
+    }
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	    //Load the game
+	    //Load the settings
 	    if (Input.GetKeyDown(KeyCode.O))
 	    {
 	        GameSettings temp = SettingsIO.ReadSettingsFromFile("GameSettings.xml");
@@ -99,7 +109,6 @@ public class SettingManager : MonoBehaviour
         _settings.PlayerSettings.RunningSpeed = 1;
         _settings.PlayerSettings.Gravity = 1;
         _settings.PlayerSettings.AirDrag = 1;
-
 
         _settings.DayNightCycleSettings.DaySpeed = 1;
         _settings.DayNightCycleSettings.NightSpeed = 1;

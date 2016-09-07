@@ -48,6 +48,20 @@ public class TmxMap
                            + "Object ID: " + tmxObject.Id + "\n"
                            + "Object Position: " + tmxObject.X + "," + tmxObject.Y + "\n"
                            + "Object Size: " + tmxObject.Width + "," + tmxObject.Height + "\n\n";
+                    
+
+                    if (tmxObject.ObjectProperties != null && tmxObject.ObjectProperties.Properties != null && tmxObject.ObjectProperties.Properties.Length > 0)
+                    {
+                        var properties = tmxObject.ObjectProperties.Properties;
+                        Debug.Log("PROPERTY DEBUG: " + properties[0].Name + " " + properties[0].Value);
+                        debugString += "Properties: \n";
+
+                        foreach (var property in properties)
+                        {
+                            debugString += property.Name + " " + property.Value + "\n";
+                        }
+                    }
+                    
                 }
             }
             else
@@ -93,10 +107,14 @@ public class TmxObject : IComparable
     [XmlAttribute("height")]
     public float Height = 0.0f;
 
+    [XmlElement("properties")]
+    public ObjectProperties ObjectProperties;
+
     [XmlElement("polygon")]
     public Polygon Poly;
 
-
+    
+    
     public int CompareTo(object obj)
     {
         if (obj == null) return 1;
@@ -106,6 +124,23 @@ public class TmxObject : IComparable
         else
             throw new ArgumentException("Other object is invalid");
     }
+}
+
+[XmlRootAttribute("properties")]
+public class ObjectProperties
+{
+    [XmlElement("property")]
+    public Property[] Properties;
+}
+
+[XmlRootAttribute("property")]
+public class Property
+{
+    [XmlAttribute("name")]
+    public string Name;
+
+    [XmlAttribute("value")]
+    public string Value;
 }
 
 [XmlRootAttribute("polygon")]

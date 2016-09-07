@@ -15,6 +15,9 @@ namespace Assets.Scripts.IO.Settings
         [XmlElement("cycle")]
         public DayNightCycleSettings DayNightCycleSettings;
 
+        [XmlElement("levelgeneration")]
+        public LevelGenerationSettings LevelGenerationSettings;
+
         public void PrintInfo(string prefix = "")
         {
             prefix +=
@@ -59,5 +62,12 @@ namespace Assets.Scripts.IO.Settings
         [XmlAttribute("dayspeed")] public float DaySpeed;
 
         [XmlAttribute("nightspeed")] public float NightSpeed;
+    }
+
+    [XmlRoot("levelgeneration")]
+    public class LevelGenerationSettings
+    {
+        [XmlAttribute("defaultplatformdepth")]
+        public float PlatformDepth = 10;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Converter
+public class MeshConverter
 {
     public static int[] QuadToTri(int i0, int i1, int i2, int i3)
     {
