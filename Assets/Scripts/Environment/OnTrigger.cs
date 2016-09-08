@@ -1,18 +1,17 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class OnTrigger : MonoBehaviour
 {
-
-    public Inventory inventory;
+    public Inventory Inventory;
+    public FeedingBehavior PickingUp;
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && !PickingUp.haveEnoguhAcorns)
         {
-            inventory.addItem = true;
+            Inventory.NutCount++;
             Destroy(gameObject);
-            Debug.Log("Fuck you");
+            Debug.Log("Got acorn");
         }
         
     }

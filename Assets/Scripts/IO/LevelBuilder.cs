@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Assets.Scripts.IO.Tiled;
+using Assets.Scripts.Procedural.Cubes;
 using Assets.Scripts.Procedural.Trees;
 
 public class LevelBuilder : MonoBehaviour
@@ -26,7 +27,6 @@ public class LevelBuilder : MonoBehaviour
     private List<GameObject> _platforms;
     private List<PlatformData> _platformsData;
     private Vector2 _mapSize;
-
 
 
     void Start ()
