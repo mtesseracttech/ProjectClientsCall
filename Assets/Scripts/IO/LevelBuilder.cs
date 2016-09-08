@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Assets.Scripts.IO.Tiled;
+using Assets.Scripts.Procedural.Cubes;
 
 public class LevelBuilder : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class LevelBuilder : MonoBehaviour
     private TmxMap map;
     private List<LayeredTreeData> _treesData;
     public GameObject LayeredTree;
+
+    private List<LayerPlatformData> _platformData;
 
 	void Start ()
 	{
@@ -27,6 +30,7 @@ public class LevelBuilder : MonoBehaviour
 
     private void CreatePlatforms()
     {
+        _platformData = new List<LayerPlatformData>();
 
     }
 
