@@ -79,6 +79,7 @@ public class PlatformRenderer : MonoBehaviour
     {
         List<Vector3> vertices = new List<Vector3>();
         List<int> indices = new List<int>();
+        List<Vector2> uvs = new List<Vector2>();
 
         vertices.AddRange(frontVertices);
 
@@ -89,7 +90,6 @@ public class PlatformRenderer : MonoBehaviour
         }
 
         //Creating the indices from quads
-        //TODO : Creating new vertices for every quad
 
         int offs = frontVertices.Length;
         for (int i = 0; i < frontVertices.Length -1; i++)
@@ -127,16 +127,17 @@ public class PlatformRenderer : MonoBehaviour
 
         finalIndices.AddRange(MeshConverter.QuadToTri(finalIndiceIterator++, finalIndiceIterator++, finalIndiceIterator++, finalIndiceIterator++));
 
-        List<Vector2> finalUVs = new List<Vector2>();
-
-        //MeshHelper.DebugArray(finalVertices.ToArray());
-        //MeshHelper.DebugArray(finalIndices.ToArray());
+        /*
+        for (int i = 0; i < finalVertices.Count; i++) //MEEEEH implementation X)
+        {
+            uvs.Add(new Vector2(finalVertices[i].x, finalVertices[i].z));
+        }
+        */
 
         Mesh mesh = new Mesh();
         mesh.vertices = finalVertices.ToArray();
         mesh.triangles = finalIndices.ToArray();
-        //mesh.vertices = vertices.ToArray();
-        //mesh.triangles = indices.ToArray();
+        //mesh.uv = uvs.ToArray();
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
