@@ -93,7 +93,7 @@ public class TmxObject : IComparable
     public int Id = 0;
 
     [XmlAttribute("name")]
-    public string Name = "";
+    public string Name = "TmxObject";
 
     [XmlAttribute("x")]
     public float X = 0.0f;
@@ -107,13 +107,14 @@ public class TmxObject : IComparable
     [XmlAttribute("height")]
     public float Height = 0.0f;
 
+    [XmlAttribute("rotation")]
+    public float Rotation = 0.0f;
+
     [XmlElement("properties")]
     public ObjectProperties ObjectProperties;
 
     [XmlElement("polygon")]
     public Polygon Poly;
-
-    
     
     public int CompareTo(object obj)
     {

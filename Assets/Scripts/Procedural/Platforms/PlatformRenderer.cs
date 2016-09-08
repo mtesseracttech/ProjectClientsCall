@@ -27,7 +27,9 @@ public class PlatformRenderer : MonoBehaviour
         // Create Vector2 vertices
         Vector2[] verticesFront = _data.GetVertices();
 
-        Mesh meshFront = CreateMesh(verticesFront);
+        Mesh meshFront = CreateMeshFromPoly(verticesFront);
+
+        meshFront.uv = verticesFront;
 
         //Debug.Log(meshFront);
 
@@ -41,9 +43,10 @@ public class PlatformRenderer : MonoBehaviour
         }
 
 
-        Mesh meshBack = CreateMesh(verticesBack, _data.GetDepth());
+        Mesh meshBack = CreateMeshFromPoly(verticesBack, _data.GetDepth());
         meshBack.triangles = meshBack.triangles.Reverse().ToArray();
 
+        meshBack.uv = verticesBack;
         //Between
 
         Mesh meshBetween = CreateBetweenMesh(meshFront.vertices, _data.GetDepth());
@@ -142,7 +145,7 @@ public class PlatformRenderer : MonoBehaviour
 
 
 
-    private Mesh CreateMesh(Vector2[] vertices2D, int depth = 0)
+    private Mesh CreateMeshFromPoly(Vector2[] vertices2D, int depth = 0)
     {
         // Use the triangulator to get triangles
         Triangulator tr = new Triangulator(vertices2D);

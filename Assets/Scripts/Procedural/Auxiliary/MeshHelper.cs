@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MeshHelper
@@ -81,5 +82,28 @@ public class MeshHelper
 
             Debug.Log(debugString);
         }
+    }
+
+    public static bool IsPolyClockWise(Vector2[] polyPoints)
+    {
+        float counter = 0;
+
+        for (int i = 0; i < polyPoints.Length - 1; i++)
+        {
+            counter += (polyPoints[i].x - polyPoints[i + 1].x) *
+                       (polyPoints[i].y + polyPoints[i].y);
+        }
+        counter += (polyPoints[polyPoints.Length - 1].x - polyPoints[0].x) *
+                   (polyPoints[polyPoints.Length - 1].y + polyPoints[0].y);
+
+        if (counter > 0) return true;
+        else return false;
+    }
+
+    public static Vector2[] InvertPolygon(Vector2[] polyPoints)
+    {
+        List<Vector2> polyList = polyPoints.ToList();
+        polyList.Reverse();
+        return polyList.ToArray();
     }
 }

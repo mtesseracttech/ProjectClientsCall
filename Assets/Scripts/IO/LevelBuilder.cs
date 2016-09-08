@@ -146,7 +146,6 @@ public class LevelBuilder : MonoBehaviour
     private void DebugLevel()
     {
         if(map != null) map.PrintInfo();
-
     }
 
 

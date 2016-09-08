@@ -20,6 +20,13 @@ public class PlatformData
         _id = data.Id;
         _vertices = TiledParsingHelper.TiledPolyParser(data.Poly.Points, (int)_2DPosition.y);
 
+
+        //Inverts the polygons in case they are inverted
+        if (MeshHelper.IsPolyClockWise(_vertices))
+        {
+            _vertices = MeshHelper.InvertPolygon(_vertices);
+        }
+
         if (data.ObjectProperties != null && data.ObjectProperties.Properties != null)
         {
             var properties = data.ObjectProperties.Properties;
@@ -59,7 +66,7 @@ public class PlatformData
 
         if (_depth == 0)
         {
-            _depth = 10;
+            _depth = 2;
         }
         if (_screenOffSet == 0)
         {
