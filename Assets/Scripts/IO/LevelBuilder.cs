@@ -53,7 +53,7 @@ public class LevelBuilder : MonoBehaviour
         else
         {
             _mapSize = new Vector2(map.Width * map.TileWidth, map.Height * map.TileHeight);
-            Debug.Log(_mapSize);
+            //Debug.Log(_mapSize);
 
             if(PlatformRenderer != null) CreatePlatforms();
             else Debug.Log("No PlatformRenderer was specified!");

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="1" height="1" tilewidth="200" tileheight="100" nextobjectid="28">
+ <objectgroup name="platforms">
+  <object id="26" name="UVTestObject" x="27.268" y="102.775">
+   <polygon points="-0.177734,-7.35 -19.9654,-7.175 -24.468,-12.6 5.33201,-12.775"/>
+  </object>
+ </objectgroup>
+</map>
