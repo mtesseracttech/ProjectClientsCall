@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="1" height="1" tilewidth="200" tileheight="100" nextobjectid="24">
+ <objectgroup name="platforms">
+  <object id="1" x="21.6" y="26.6">
+   <polygon points="0,0 74.2,17.2 50,29.4 17.2,22"/>
+  </object>
+  <object id="2" x="97.2" y="44.4">
+   <polygon points="0,0 51.2,0.2 45.6,13.4 -25.6,11.6 -2.2,-0.6"/>
+  </object>
+  <object id="5" x="169.2" y="74">
+   <polygon points="0,0 -0.6,20.2 -38.2,20 -29,7.8"/>
+  </object>
+  <object id="6" x="140.4" y="82.4">
+   <polygon points="0,0 -45.4,-1.6 -47,10.4 -9.6,11.8"/>
+  </object>
+  <object id="13" x="58.8" y="20">
+   <properties>
+    <property name="depth" type="int" value="200"/>
+    <property name="screenoffset" type="int" value="100"/>
+   </properties>
+   <polygon points="0,0 -8.8,-17 35.8,-9.8"/>
+  </object>
+  <object id="20" name="ClockWise" x="128.2" y="6">
+   <polygon points="0,0 18,23.8 -20.6,21.8 -17.6,-3"/>
+  </object>
+  <object id="23" name="CounterClockWise" x="60.6" y="75">
+   <polygon points="0,0 -49,-9.6 -50.4,9.2 -11.6,18.6"/>
+  </object>
+ </objectgroup>
+</map>

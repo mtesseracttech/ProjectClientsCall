@@ -1,19 +1,35 @@
 ﻿
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Assets.Scripts.IO.Tiled;
 using Assets.Scripts.Procedural.Cubes;
+using Assets.Scripts.Procedural.Trees;
 
 public class LevelBuilder : MonoBehaviour
 {
+    [Header("File Input(TMX File has priority)")]
     public TextAsset TmxFile;
+    public String TmxFileName;
+
+    [Header("Renderer GameObjects")]
+    public GameObject PlatformRenderer;
+
+    [Header("Prefabs")]
+    public GameObject TreePrefab;
+    public GameObject AcornPrefab;
+
     private TmxMap map;
-    private List<LayeredTreeData> _treesData;
-    public GameObject LayeredTree;
+    private List<GameObject> _trees;
+    private List<TreeData> _treesData;
+    private List<GameObject> _acorns;
+    private List<GameObject> _platforms;
+    private List<PlatformData> _platformsData;
+    private Vector2 _mapSize;
 
-    private List<LayerPlatformData> _platformData;
 
-	void Start ()
+    void Start ()
 	{
 	    CreateLevel();
 
@@ -22,57 +38,113 @@ public class LevelBuilder : MonoBehaviour
 
     private void CreateLevel()
     {
-        map = TmxReader.ReadLevel(TmxFile);
+        if (TmxFile != null)
+        {
+            map = TmxReader.ReadLevel(TmxFile);
+        }
+        else
+        {
+            map = TmxReader.ReadLevel(TmxFileName);
+        }
+        if (map == null)
+        {
+            Debug.Log("NO LEVEL WAS LOADED!");
+        }
+        else
+        {
+            _mapSize = new Vector2(map.Width * map.TileWidth, map.Height * map.TileHeight);
+            Debug.Log(_mapSize);
 
-        CreatePlatforms();
-        CreateTrees();
+            if(PlatformRenderer != null) CreatePlatforms();
+            else Debug.Log("No PlatformRenderer was specified!");
+
+            if(TreePrefab != null) CreateTrees();
+            else Debug.Log("No Tree prefab was specified!");
+
+            if(AcornPrefab != null) CreateAcorns();
+            else Debug.Log("No Acorn Prefab was specified!");
+        }
     }
 
-    private void CreatePlatforms()
+    private void CreateAcorns()
     {
-        _platformData = new List<LayerPlatformData>();
+        _acorns = new List<GameObject>();
 
+        foreach (var layer in map.TmxObjectLayers)
+        {
+            string name = layer.Name;
+            if (name.Contains("acorns"))
+            {
+                if (layer.TmxObjects != null)
+                {
+                    foreach (var acorn in layer.TmxObjects)
+                    {
+                        Vector3 acornPos = new Vector3(acorn.X, acorn.Y, 5);
+                        GameObject instantiatedTree = Instantiate(AcornPrefab, acornPos, Quaternion.identity) as GameObject;
+                        _acorns.Add(instantiatedTree);
+                    }
+                }
+            }
+        }
     }
 
     private void CreateTrees()
     {
-        _treesData = new List<LayeredTreeData>();
+        _trees = new List<GameObject>();
+        _treesData = new List<TreeData>();
 
         foreach (var layer in map.TmxObjectLayers)
         {
-            if (layer.Name.ToLower().Contains("tree"))
+            string name = layer.Name;
+            if (name.Contains("treelayer"))
             {
-                _treesData.Add(new LayeredTreeData(layer, layer.Name));
+                int layerNumber = TiledParsingHelper.RetrieveNumFromString(name);
+                if (layer.TmxObjects != null)
+                {
+                    foreach (var tree in layer.TmxObjects)
+                    {
+                        _treesData.Add(new TreeData(tree, layerNumber));
+                    }
+                }
             }
         }
 
         foreach (var treeData in _treesData)
         {
-            GameObject tree = Instantiate(LayeredTree, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-            if(tree != null) tree.SendMessage("Create", treeData);
+            GameObject instantiatedTree = Instantiate(TreePrefab, treeData.GetPosition(), treeData.GetRotation()) as GameObject;
+            _trees.Add(instantiatedTree);
+        }
+    }
+
+    private void CreatePlatforms()
+    {
+        _platforms = new List<GameObject>();
+        _platformsData = new List<PlatformData>();
+
+        foreach (var layer in map.TmxObjectLayers)
+        {
+            if (layer.Name.ToLower().Contains("platforms"))
+            {
+                foreach (TmxObject platform in layer.TmxObjects)
+                {
+                    _platformsData.Add(new PlatformData(platform));
+                }
+            }
+        }
+
+        foreach (var platformData in _platformsData)
+        {
+            Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + _mapSize.y, platformData.GetScreenOffSet());
+            GameObject platform = Instantiate(PlatformRenderer, platformPosition, Quaternion.identity) as GameObject;
+            platform.SendMessage("Create", platformData);
+            _platforms.Add(platform);
         }
     }
 
 
     private void DebugLevel()
     {
-        map.PrintInfo();
-
-        string treeDebug = "Layered Tree Debug Info: \n\n";
-        foreach (var layeredTree in _treesData)
-        {
-            treeDebug += ("* Tree: " + layeredTree.GetName()+ "\n");
-
-            foreach (var slice in layeredTree.GetSlices())
-            {
-                treeDebug += ("> TreeSlice: " + slice.GetSliceNum() +
-                          ", Slice Vertexes: " + slice.GetVertices().Length +
-                          ", Starting Pos: " + slice.GetStartPos()+
-                "\n");
-            }
-            treeDebug += "\n";
-        }
-        Debug.Log(treeDebug);
+        if(map != null) map.PrintInfo();
     }
 
 

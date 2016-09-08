@@ -3,58 +3,71 @@ using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
 
-[Serializable]
-[XmlRootAttribute("settings")]
-public class GameSettings
+namespace Assets.Scripts.IO.Settings
 {
-    [XmlElement("player")]
-    public PlayerSettings PlayerSettings;
-
-    [XmlElement("cycle")]
-    public DayNightCycle DayNightCycle;
-
-    public void PrintInfo(string prefix = "")
+    [Serializable]
+    [XmlRoot("settings")]
+    public class GameSettings
     {
-        prefix +=
-            "Settings: \n\n" +
-            "Player Settings: \n" +
-            "Jump Height: " + PlayerSettings.JumpingHeight + "\n" +
-            "Running Speed: " + PlayerSettings.RunningSpeed + "\n" +
-            "Flying Speed: " + PlayerSettings.FlyingSpeed + "\n" +
-            "Gravity: " + PlayerSettings.Gravity + "\n" +
-            "Air Drag: " + PlayerSettings.AirDrag + "\n\n" +
-            "D/N Cycle Settings: \n" +
-            "Day Cycle Speed: " + DayNightCycle.DaySpeed + "\n" +
-            "Night Cycle Speed: " + DayNightCycle.NightSpeed;
+        [XmlElement("player")]
+        public PlayerSettings PlayerSettings;
 
-        Debug.Log(prefix);
+        [XmlElement("cycle")]
+        public DayNightCycleSettings DayNightCycleSettings;
+
+        [XmlElement("levelgeneration")]
+        public LevelGenerationSettings LevelGenerationSettings;
+
+        public void PrintInfo(string prefix = "")
+        {
+            prefix +=
+                "Settings: \n\n" +
+                "Player Settings: \n" +
+                "Jump Height: " + PlayerSettings.JumpingHeight + "\n" +
+                "Running Speed: " + PlayerSettings.RunningSpeed + "\n" +
+                "Flying Speed: " + PlayerSettings.FlyingSpeed + "\n" +
+                "Gravity: " + PlayerSettings.Gravity + "\n" +
+                "Air Drag: " + PlayerSettings.AirDrag + "\n\n" +
+                "D/N Cycle Settings: \n" +
+                "Day Cycle Speed: " + DayNightCycleSettings.DaySpeed + "\n" +
+                "Night Cycle Speed: " + DayNightCycleSettings.NightSpeed;
+
+            Debug.Log(prefix);
+        }
     }
-}
 
 
-[XmlRootAttribute("player")]
-public class PlayerSettings
-{
-    [XmlAttribute("jumpingheight")]
-    public float JumpingHeight;
+    [XmlRoot("player")]
+    public class PlayerSettings
+    {
+        [XmlAttribute("jumpingheight")]
+        public float JumpingHeight;
 
-    [XmlAttribute("runningspeed")]
-    public float RunningSpeed;
+        [XmlAttribute("runningspeed")]
+        public float RunningSpeed;
 
-    [XmlAttribute("flyingspeed")]
-    public float FlyingSpeed;
+        [XmlAttribute("flyingspeed")]
+        public float FlyingSpeed;
 
-    [XmlAttribute("gravity")]
-    public float Gravity;
+        [XmlAttribute("gravity")]
+        public float Gravity;
 
-    [XmlAttribute("airdrag")]
-    public float AirDrag;
-}
+        [XmlAttribute("airdrag")]
+        public float AirDrag;
+    }
 
-[XmlRootAttribute("cycle")]
-public class DayNightCycle
-{
-    [XmlAttribute("dayspeed")] public float DaySpeed;
+    [XmlRoot("cycle")]
+    public class DayNightCycleSettings
+    {
+        [XmlAttribute("dayspeed")] public float DaySpeed;
 
-    [XmlAttribute("nightspeed")] public float NightSpeed;
+        [XmlAttribute("nightspeed")] public float NightSpeed;
+    }
+
+    [XmlRoot("levelgeneration")]
+    public class LevelGenerationSettings
+    {
+        [XmlAttribute("defaultplatformdepth")]
+        public float PlatformDepth = 10;
+    }
 }

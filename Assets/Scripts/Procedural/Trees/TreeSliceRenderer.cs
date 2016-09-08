@@ -52,7 +52,7 @@ public class TreeSliceRenderer : MonoBehaviour
         for (int i = 0; i < verticesWalls.Count; i+=2)
         {
             int limit = verticesWalls.Count;
-            int[] trianglesFromQuad = Converter.QuadToTri(i, i+1 % limit, i+3 % limit, i+2 % limit);
+            int[] trianglesFromQuad = MeshConverter.QuadToTri(i, i+1 % limit, i+3 % limit, i+2 % limit);
             trianglesWalls.AddRange(trianglesFromQuad);
         }
 
