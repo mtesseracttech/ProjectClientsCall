@@ -90,7 +90,6 @@ public class LevelBuilder : MonoBehaviour
 
     private void CreateTrees()
     {
-        //Adding rotation would require splicing up data into treeData to keep things clean
         _trees = new List<GameObject>();
         _treesData = new List<TreeData>();
 
@@ -146,7 +145,6 @@ public class LevelBuilder : MonoBehaviour
     private void DebugLevel()
     {
         if(map != null) map.PrintInfo();
-
     }
 
 
