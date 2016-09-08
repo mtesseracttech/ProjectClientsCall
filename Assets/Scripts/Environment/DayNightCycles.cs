@@ -10,8 +10,6 @@ namespace Environment
         public FeedingBehavior behavior;
         public bool GameOver;
 
-        [Header("Object reference")]
-        public Transform Stars;
 
         [Header("Color changers")]
         public Gradient NightDayColor;
@@ -33,24 +31,21 @@ namespace Environment
         [Header("Sun parameters")]
         private float _timeofDay = 1;
         public int DaysHasPassed = 0;
-        private bool _checkingDayCycle;
+        public bool dayHasCome;
+        private float daySpeed;
+        private float nightSpeed;
 
         void Start()
         {
             _mainLight = GetComponent<Light>();
             _sky = RenderSettings.skybox;
-            _checkingDayCycle = false;
             NightHasCome = false;
+            dayHasCome = false;
+            daySpeed = DayRotateSpeed.x;
         }
         void Update()
         {
-            StarsRotation();
             DirectionalLightCalculations();
-        }
-
-        private void StarsRotation()
-        {
-            Stars.transform.rotation = transform.rotation;//rotate starts with sun
         }
 
         private void DirectionalLightCalculations()
@@ -69,48 +64,56 @@ namespace Environment
             RenderSettings.fogColor = NightDayFogColor.Evaluate(dot);
             RenderSettings.fogDensity = FogDensityCurve.Evaluate(dot) * FogScale;
 
-            if (behavior.InTheCave)//when we enter cave this becomes true and need sun to rotate around till it's morning and stop.
-            {
-                DayRotateSpeed.x = 40;
-            }
-            else
-            {
-                DayRotateSpeed.x = 1;
-            }
-
+            UpdatingSpeed();
             //dot -1 - 1
             //day
-            if (dot > 0 )
+            if (dot > 0)
             {
-                transform.Rotate(DayRotateSpeed * Speed);
+                transform.Rotate(DayRotateSpeed*Speed);
                 NightHasCome = false;
-                _checkingDayCycle = false;
-               
+                
             }
             //night
             else
             {
-                transform.Rotate(NightRotateSpeed * Speed);
-                NightHasCome = true;
+                transform.Rotate(NightRotateSpeed*Speed);
                 Debug.Log("Night has come");
+                dayHasCome = false;
                 UpdatingDays();
-                
-            }         
+            }
         }
+
         public float SpeedPerTime()
         {
             Speed = Time.deltaTime * _timeofDay;
             return Speed;
         }
-        //this doesn't update to second day. just says it's first day
+
+        //this doesn't update to second day. just says it's first day all the fucking time 1000x
         private void UpdatingDays()
         {
-            if (!NightHasCome && !_checkingDayCycle)
+            if (!NightHasCome)
             {
                 DaysHasPassed += 1;
                 Debug.Log("One day passed " + DaysHasPassed);
-                _checkingDayCycle = true;
+                NightHasCome = true;
+            }
+            if (DaysHasPassed >= 0)
+            {
+                behavior.InTheCave = false;
+            }
+            
+        }
 
+        private void UpdatingSpeed()
+        {
+            if (behavior.InTheCave)
+            {
+                DayRotateSpeed.x = NightRotateSpeed.x;
+            }
+            else
+            {
+                DayRotateSpeed.x = daySpeed;
             }
         }
     }
