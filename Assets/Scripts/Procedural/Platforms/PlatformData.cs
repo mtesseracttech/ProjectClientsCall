@@ -10,8 +10,8 @@ public class PlatformData
     private readonly Vector2 _2DPosition;
     private readonly Vector2[] _vertices;
 
-    private readonly int _depth;
-    private readonly int _screenOffSet;
+    private readonly float _depth;
+    private readonly float _screenOffSet;
 
     public PlatformData(TmxObject data)
     {
@@ -38,21 +38,21 @@ public class PlatformData
                     case "depth":
                         try
                         {
-                            _depth = int.Parse(property.Value);
+                            _depth = float.Parse(property.Value);
                         }
                         catch (Exception ex)
                         {
-                            Debug.Log("Depth could not be loaded!");
+                            Debug.Log("Depth could not be loaded!\n" + ex);
                         }
                         break;
                     case "screenoffset":
                         try
                         {
-                            _screenOffSet = int.Parse(property.Value);
+                            _screenOffSet = float.Parse(property.Value);
                         }
                         catch (Exception ex)
                         {
-                            Debug.Log("Screen offset could not be loaded!");
+                            Debug.Log("Screen offset could not be loaded!\n" + ex);
                         }
                         break;
                     default:
@@ -103,12 +103,12 @@ public class PlatformData
         return _name;
     }
 
-    public int GetDepth()
+    public float GetDepth()
     {
         return _depth;
     }
 
-    public int GetScreenOffSet()
+    public float GetScreenOffSet()
     {
         return _screenOffSet;
     }

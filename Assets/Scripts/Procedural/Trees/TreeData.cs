@@ -25,11 +25,11 @@ namespace Assets.Scripts.Procedural.Trees
                     {
                         try
                         {
-                            Quaternion.AngleAxis(int.Parse(property.Value), Vector3.up);
+                            _rotation = Quaternion.AngleAxis(float.Parse(property.Value), Vector3.up);
                         }
                         catch (Exception ex)
                         {
-                            Debug.Log("Could not create an appropriate rotation!");
+                            Debug.Log("Could not create an appropriate rotation!" + ex);
                         }
                     }
                 }

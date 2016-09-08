@@ -1,10 +1,7 @@
-﻿
-using System;
+﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Assets.Scripts.IO.Tiled;
-using Assets.Scripts.Procedural.Cubes;
 using Assets.Scripts.Procedural.Trees;
 
 public class LevelBuilder : MonoBehaviour
@@ -53,7 +50,6 @@ public class LevelBuilder : MonoBehaviour
         else
         {
             _mapSize = new Vector2(map.Width * map.TileWidth, map.Height * map.TileHeight);
-            //Debug.Log(_mapSize);
 
             if(PlatformRenderer != null) CreatePlatforms();
             else Debug.Log("No PlatformRenderer was specified!");

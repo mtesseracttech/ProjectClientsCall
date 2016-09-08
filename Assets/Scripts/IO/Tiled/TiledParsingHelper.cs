@@ -18,7 +18,7 @@ public class TiledParsingHelper
             }
             catch (Exception ex)
             {
-                Debug.Log("Failed to load the vector: " + coords[0] + " " + coords[1]);
+                Debug.Log("Failed to load the vector: " + coords[0] + " " + coords[1] + "\n" + ex);
             }
         }
 
