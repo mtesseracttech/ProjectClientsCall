@@ -89,14 +89,15 @@ public class MeshHelper
         }
         else if (array.Length < 1)
         {
-            Debug.Log("Array is null");
+            Debug.Log("Array is empty");
         }
         else
         {
             string debugString = "Array Debug\n";
-            foreach (var o in array)
+            int i = 0;
+            foreach (var entry in array)
             {
-                debugString += o + "\n";
+                debugString += i + ". " + entry + "\n";
             }
 
             Debug.Log(debugString);
@@ -109,11 +110,11 @@ public class MeshHelper
 
         for (int i = 0; i < polyPoints.Length - 1; i++)
         {
-            counter += (polyPoints[i].x - polyPoints[i + 1].x) *
-                       (polyPoints[i].y + polyPoints[i].y);
+            counter += (polyPoints[i+1].x - polyPoints[i].x) *
+                       (polyPoints[i+1].y + polyPoints[i].y);
         }
-        counter += (polyPoints[polyPoints.Length - 1].x - polyPoints[0].x) *
-                   (polyPoints[polyPoints.Length - 1].y + polyPoints[0].y);
+        counter += (polyPoints[0].x - polyPoints[polyPoints.Length - 1].x) *
+                   (polyPoints[0].y + polyPoints[polyPoints.Length - 1].y);
 
         if (counter > 0) return true;
         else return false;

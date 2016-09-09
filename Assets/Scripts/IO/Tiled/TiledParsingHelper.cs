@@ -5,7 +5,7 @@ using UnityEngine;
 public class TiledParsingHelper
 {
 
-    public static Vector2[] TiledPolyParser(string inputPolyString, int startPos)
+    public static Vector2[] TiledPolyParser(string inputPolyString)
     {
         List<Vector2> vertices = new List<Vector2>();
         string[] vectorStrings = inputPolyString.Split(' ');
@@ -22,6 +22,7 @@ public class TiledParsingHelper
             }
         }
 
+        //Inverting the y coordinate because Unity uses y+ up and Tiled y+ down
         for (int i = 0; i < vertices.Count; i++)
         {
             vertices[i] = new Vector2(vertices[i].x, -vertices[i].y);
@@ -37,7 +38,7 @@ public class TiledParsingHelper
 
         for (int i = 0; i < input.Length; i++)
         {
-            if (Char.IsDigit(input[i]) || i == '-')
+            if (char.IsDigit(input[i]) || i == '-')
                 outputString += input[i];
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.IO.Tiled;
 using Assets.Scripts.Procedural.Trees;
 
@@ -20,16 +21,15 @@ public class LevelBuilder : MonoBehaviour
     private TmxMap map;
     private List<GameObject> _trees;
     private List<TreeData> _treesData;
-    private List<GameObject> _acorns;
     private List<GameObject> _platforms;
     private List<PlatformData> _platformsData;
+    private List<GameObject> _acorns;
     private Vector2 _mapSize;
 
 
     void Start ()
 	{
 	    CreateLevel();
-
 	    DebugLevel();
 	}
 
@@ -49,6 +49,8 @@ public class LevelBuilder : MonoBehaviour
         }
         else
         {
+            Debug.Log("Level was successfully loaded");
+
             _mapSize = new Vector2(map.Width * map.TileWidth, map.Height * map.TileHeight);
 
             if(PlatformRenderer != null) CreatePlatforms();
@@ -148,6 +150,53 @@ public class LevelBuilder : MonoBehaviour
     // Update is called once per frame
 	void Update ()
 	{
-
+	    if (Input.GetKeyDown(KeyCode.L))
+	    {
+	        RebuildLevel();
+	    }
 	}
+
+    private void RebuildLevel()
+    {
+        DestroyAllGameData();
+        Start();
+    }
+
+    private void DestroyAllGameData()
+    {
+        //Empty and Nullify Gameobject Lists
+        EmptyList(_platformsData);
+
+        EmptyList(_treesData);
+
+        //Empty and Nullify other generated Data
+        DestroyGameObjectList(_platforms);
+
+        DestroyGameObjectList(_trees);
+
+        DestroyGameObjectList(_acorns);
+    }
+
+    private void DestroyGameObjectList(List<GameObject> gameObjects)
+    {
+        if (gameObjects != null)
+        {
+            for (int index = 0; index < gameObjects.Count; index++)
+            {
+                Destroy(gameObjects[index]);
+            }
+            EmptyList(gameObjects);
+        }
+    }
+
+    private void EmptyList<T>(List<T> list)
+    {
+        if (list != null)
+        {
+            if (list.Count > 0)
+            {
+                list.RemoveRange(0, list.Count - 1);
+            }
+        }
+    }
 }
