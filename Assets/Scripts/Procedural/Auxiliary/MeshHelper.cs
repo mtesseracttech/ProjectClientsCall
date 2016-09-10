@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MeshHelper
 {
-    public static Mesh CombineMeshesMultiMaterial(Mesh[] meshes, string newName = "Combined Mesh")
+    public static Mesh CombineMeshesMultiMaterial(Mesh[] meshes, string newName = "SubMesh Mesh")
     {
         CombineInstance[] combine = new CombineInstance[meshes.Length];
 

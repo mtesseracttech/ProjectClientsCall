@@ -11,7 +11,7 @@ public class LevelBuilder : MonoBehaviour
 {
     [Header("File Input(TMX File has priority)")]
     public TextAsset TmxFile;
-    public String TmxFileName;
+    public string TmxFileName;
 
     [Header("Renderer GameObjects")]
     public GameObject PlatformRenderer;
@@ -21,7 +21,11 @@ public class LevelBuilder : MonoBehaviour
     public GameObject TreePrefab;
     public GameObject AcornPrefab;
 
+    [Header("Other")]
+    public GameObject Player;
+
     private TmxMap map;
+    private Vector3 _playerSpawn;
     private List<GameObject> _trees;
     private List<TreeData> _treesData;
     private List<GameObject> _platforms;
@@ -70,7 +74,33 @@ public class LevelBuilder : MonoBehaviour
 
             if(AcornPrefab != null) CreateAcorns();
             else Debug.Log("No Acorn Prefab was specified!");
+
+            if (Player != null) SetPlayerSpawn();
+            else Debug.Log("No Player linked was specified!");
         }
+    }
+
+    private void SetPlayerSpawn()
+    {
+        foreach (var layer in map.TmxObjectLayers)
+        {
+            if (layer.Name.ToLower().Contains("playerspawn"))
+            {
+                if (layer.TmxObjects != null && layer.TmxObjects.Length > 0)
+                {
+                    if (layer.TmxObjects.Length > 1) Debug.Log("More than one player spawn was defined in the TMX Map");
+                    else
+                    {
+                        _playerSpawn = new Vector3(layer.TmxObjects[0].X, layer.TmxObjects[0].Y, 1);
+                    }
+                }
+            }
+        }
+        if (_playerSpawn != null)
+        {
+            //INSERT SETTING THE PLAYER POSITION TO THIS LOCATION
+        }
+        else Debug.Log("No player spawn was created");
     }
 
     private void CreateProceduralTrees()
@@ -206,8 +236,11 @@ public class LevelBuilder : MonoBehaviour
         {
             Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + MapSize.y, platformData.GetScreenOffSet());
             GameObject platform = Instantiate(PlatformRenderer, platformPosition, Quaternion.identity) as GameObject;
-            platform.SendMessage("Create", platformData);
-            _platforms.Add(platform);
+            if (platform != null)
+            {
+                platform.SendMessage("Create", platformData);
+                _platforms.Add(platform);
+            }
         }
     }
 
@@ -263,12 +296,9 @@ public class LevelBuilder : MonoBehaviour
 
     private void EmptyList<T>(List<T> list)
     {
-        if (list != null)
+        if (list != null && list.Count > 0)
         {
-            if (list.Count > 0)
-            {
-                list.RemoveRange(0, list.Count - 1);
-            }
+            list.RemoveRange(0, list.Count - 1);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
-using Assets.Scripts.Procedural;
-using JetBrains.Annotations;
+using Assets.Scripts.Procedural.Auxiliary;
 using UnityEngine;
 
 public class PlatformData
@@ -19,7 +18,7 @@ public class PlatformData
         _id = data.Id;
 
         _poly = new Polygon2D(data.Poly.Points);
-        if(!_poly.IsClockwise()) _poly.RevertVertices(); //Probably the cleanest solution
+        if(!_poly.IsClockwise()) _poly.RevertVertices();
 
         if (data.ObjectProperties != null && data.ObjectProperties.Properties != null)
         {
