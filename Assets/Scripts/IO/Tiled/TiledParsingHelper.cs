@@ -31,6 +31,13 @@ public class TiledParsingHelper
         return vertices.ToArray();
     }
 
+    public static float TiledCompensator(float input, float gameHeight)
+    {
+        return -(input - gameHeight);
+    }
+
+
+
     public static int RetrieveNumFromString(string input)
     {
         string outputString = string.Empty;

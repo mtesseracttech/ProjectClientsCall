@@ -2,8 +2,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using Assets.Scripts.IO.Tiled;
 using Assets.Scripts.Procedural.Trees;
+using UnityEditor;
 
 public class LevelBuilder : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class LevelBuilder : MonoBehaviour
 
     [Header("Renderer GameObjects")]
     public GameObject PlatformRenderer;
+    public GameObject ProceduralTreeRenderer;
 
     [Header("Prefabs")]
     public GameObject TreePrefab;
@@ -23,8 +26,10 @@ public class LevelBuilder : MonoBehaviour
     private List<TreeData> _treesData;
     private List<GameObject> _platforms;
     private List<PlatformData> _platformsData;
+    private List<GameObject> _proceduralTrees;
+    private List<ProceduralTreeData> _proceduralTreesData;
     private List<GameObject> _acorns;
-    private Vector2 _mapSize;
+    public static Vector2 MapSize;
 
 
     void Start ()
@@ -51,16 +56,83 @@ public class LevelBuilder : MonoBehaviour
         {
             Debug.Log("Level was successfully loaded");
 
-            _mapSize = new Vector2(map.Width * map.TileWidth, map.Height * map.TileHeight);
+            MapSize = new Vector2(map.Width * map.TileWidth, map.Height * map.TileHeight);
 
             if(PlatformRenderer != null) CreatePlatforms();
             else Debug.Log("No PlatformRenderer was specified!");
 
+            if (ProceduralTreeRenderer != null) CreateProceduralTrees();
+            else Debug.Log("No ProceduralTreeRenderer was specified!");
+
             if(TreePrefab != null) CreateTrees();
             else Debug.Log("No Tree prefab was specified!");
 
+
             if(AcornPrefab != null) CreateAcorns();
             else Debug.Log("No Acorn Prefab was specified!");
+        }
+    }
+
+    private void CreateProceduralTrees()
+    {
+        _proceduralTreesData = new List<ProceduralTreeData>();
+        _proceduralTrees = new List<GameObject>();
+
+        List<List<TmxObject>> treesRawData = new List<List<TmxObject>>(); //Represents the trees
+        List<int> treesLayers = new List<int>();
+        List<string> treesNames = new List<string>();
+
+        foreach (var layer in map.TmxObjectLayers)
+        {
+            if (layer.Name.ToLower().Contains("slicetrees"))
+            {
+                int layerNumber = TiledParsingHelper.RetrieveNumFromString(layer.Name.ToLower());
+
+                string currentName = "";
+
+                List<TmxObject> tree = new List<TmxObject>();
+
+
+                foreach (var slice in layer.TmxObjects)
+                {
+                    string[] nameParts = slice.Name.Split('_');
+
+                    if (tree.Count > 0 && nameParts[0] != currentName)
+                    {
+                        treesRawData.Add(tree);
+                        treesLayers.Add(layerNumber);
+                        treesNames.Add(currentName);
+                        tree = new List<TmxObject>();
+                    }
+
+                    tree.Add(slice);
+                    currentName = nameParts[0];
+                }
+                if (tree.Count > 0)
+                {
+                    treesRawData.Add(tree);
+                    treesLayers.Add(layerNumber);
+                    treesNames.Add(currentName);
+                }
+            }
+        }
+
+        MeshHelper.DebugArray(treesNames.ToArray(), "TREE NAMES:");
+
+        for (int index = 0; index < treesRawData.Count; index++)
+        {
+            _proceduralTreesData.Add(new ProceduralTreeData(treesRawData[index], treesLayers[index], treesNames[index]));
+        }
+
+        foreach (ProceduralTreeData treeData in _proceduralTreesData)
+        {
+            Vector3 location = treeData.GetStartPosition();
+            GameObject tree = Instantiate(ProceduralTreeRenderer, location, Quaternion.identity) as GameObject;
+            if (tree != null)
+            {
+                tree.SendMessage("Create", treeData);
+                _proceduralTrees.Add(tree);
+            }
         }
     }
 
@@ -132,7 +204,7 @@ public class LevelBuilder : MonoBehaviour
 
         foreach (var platformData in _platformsData)
         {
-            Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + _mapSize.y, platformData.GetScreenOffSet());
+            Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + MapSize.y, platformData.GetScreenOffSet());
             GameObject platform = Instantiate(PlatformRenderer, platformPosition, Quaternion.identity) as GameObject;
             platform.SendMessage("Create", platformData);
             _platforms.Add(platform);

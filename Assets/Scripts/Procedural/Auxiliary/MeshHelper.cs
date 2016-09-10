@@ -43,7 +43,7 @@ public class MeshHelper
     }
 
 
-    private static Mesh CreateTestCube()
+    public static Mesh CreateTestCube()
     {
         /*  1 2
         L1: 0 3
@@ -81,27 +81,25 @@ public class MeshHelper
     }
 
 
-    public static void DebugArray<T>(T[] array)
+    public static void DebugArray<T>(T[] array, string addedMessage = "")
     {
+        string debugString = addedMessage + "\n";
         if (array == null)
         {
-            Debug.Log("Array is null");
+            debugString += "Array is Null";
         }
         else if (array.Length < 1)
         {
-            Debug.Log("Array is empty");
+            debugString += "Array is Empty";
         }
         else
         {
-            string debugString = "Array Debug\n";
-            int i = 0;
-            foreach (var entry in array)
+            for (int i = 0;  i < array.Length;  i++)
             {
-                debugString += i + ". " + entry + "\n";
+                debugString += i + ". " + array[i] + "\n";
             }
-
-            Debug.Log(debugString);
         }
+        Debug.Log(debugString);
     }
 
     public static bool IsPolyClockWise(Vector2[] polyPoints)

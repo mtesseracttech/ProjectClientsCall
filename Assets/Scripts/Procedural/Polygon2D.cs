@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Procedural
 {
-    class Polygon2D
+    public class Polygon2D
     {
         private Vector2[] _vertices;
 
@@ -43,6 +43,25 @@ namespace Assets.Scripts.Procedural
         public void Debug()
         {
             MeshHelper.DebugArray(_vertices);
+        }
+
+        public override string ToString()
+        {
+            string returnString = "Polygon Vertices:\n";
+
+            if (_vertices.Length > 0)
+            {
+                for (int i = 0; i < _vertices.Length; i++)
+                {
+                    returnString += i + ". " + _vertices[i] + "\n";
+                }
+            }
+            else
+            {
+                returnString += "No vertices were defined!";
+            }
+
+            return returnString;
         }
     }
 }
