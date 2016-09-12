@@ -43,7 +43,7 @@ public class MovementScript : MonoBehaviour
     // ----------------------------------------
     void Start()
     {
-        GetComponent<MeshRenderer>().enabled = false;
+        GetComponent<MeshRenderer>().enabled = true;
 
         s = new SquirrelMachine(SquirrelState.running);
 
@@ -105,7 +105,7 @@ public class MovementScript : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
             acceleration += new Vector2(jumpSpeed, 0);
 
-        float angle = (_orientation == Orientation.forward? 180 : 0) + Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+        float angle = (_orientation == Orientation.forward ? 180 : 0) + Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         transform.eulerAngles = new Vector3(0, 0, 180 + angle);
 
         if (Vector3.Dot(Vector3.up, transform.up) < 0)
@@ -132,7 +132,7 @@ public class MovementScript : MonoBehaviour
 
         if (hit0.distance < velocity.magnitude + 0.1f)
         {
-            transform.position = hit0.point + rear + (hit0.distance == hit2.distance ?  bottom : -bottom);
+            transform.position = hit0.point + rear + (hit0.distance == hit2.distance ? bottom : -bottom);
             transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(-hit0.normal.x, hit0.normal.y) * Mathf.Rad2Deg);
             print(transform.eulerAngles.z);
             UpdateLocalVectors();
