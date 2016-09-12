@@ -240,6 +240,12 @@ public class LevelBuilder : MonoBehaviour
         {
             Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + MapSize.y, platformData.GetScreenOffSet()-1);
             GameObject platform = Instantiate(PlatformRenderer, platformPosition, Quaternion.identity) as GameObject;
+
+            platform.SendMessage("Create", platformData);
+            _platforms.Add(platform);
+
+            platform.transform.parent = transform;
+
             if (platform != null)
             {
                 platform.SendMessage("Create", platformData);

@@ -13,7 +13,7 @@ public class Smoothing : MonoBehaviour {
 	void Update ()
     {
         Vector3 pRV = parentAngle.eulerAngles;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(new Vector3( pRV.x, pRV.y, pRV.z + 90f)) , 0.1f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(new Vector3( pRV.x, pRV.y, pRV.z + 90f)) , 0.2f);
         transform.position += (parentAngle.position - transform.position) * 0.3f;
 	}
 }

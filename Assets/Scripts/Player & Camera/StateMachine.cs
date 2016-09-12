@@ -6,7 +6,6 @@ public enum SquirrelState
     idling,
     running,
     jumping,
-    flying,
 }
 
 public enum Key
