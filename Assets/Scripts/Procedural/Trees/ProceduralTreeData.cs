@@ -9,6 +9,7 @@ namespace Assets.Scripts.Procedural.Trees
         private readonly Polygon2D[] _slices;
         private readonly Vector3 _startPosition;
         private readonly Vector3[] _relativeStartPositions;
+        private readonly int[] _sliceNumber;
         private readonly int _layerNumber;
         private readonly string _name;
 
