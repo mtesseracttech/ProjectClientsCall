@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -165,7 +166,6 @@ public class PlatformRenderer : MonoBehaviour
             uvs.Add(new Vector2(finalVertices[i].x + Vector3.Distance(finalVertices[i], finalVertices[i + 2]), 1));
             uvs.Add(new Vector2(finalVertices[i].x + Vector3.Distance(finalVertices[i], finalVertices[i + 2]), 0));
         }
-
 
         //Creating and Populating the Mesh////
 

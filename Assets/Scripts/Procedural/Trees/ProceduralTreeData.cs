@@ -1,24 +1,29 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.Procedural.Trees
 {
     public class ProceduralTreeData
     {
-        public static float SliceThickness = 1f;
+        private const float SliceThickness = 1f;
         private readonly Polygon2D[] _slices;
         private readonly Vector3 _startPosition;
         private readonly Vector3[] _relativeStartPositions;
+        private readonly int[] _sliceNumber;
         private readonly int _layerNumber;
         private readonly string _name;
 
         public ProceduralTreeData(List<TmxObject> slices, int treesLayer, string name)
         {
+            slices = SortSlices(slices);
+
+
             //Debug.Log("NEW Procedural Tree Data (" + slices[0].Id + ")");
             List<Polygon2D> tempPolys = new List<Polygon2D>();
             List<Vector3> relativeStartPositions = new List<Vector3>();
 
-            _startPosition = new Vector3(slices[0].X, TiledParsingHelper.TiledCompensator(slices[0].Y, LevelBuilder.MapSize.y), (treesLayer + 1) * 5);
+            _startPosition = new Vector3(slices[0].X, TiledParsingHelper.TiledCompensator(slices[0].Y, LevelBuilder.MapSize.y), treesLayer * 5);
             _layerNumber = treesLayer;
             _name = name;
 
@@ -50,6 +55,11 @@ namespace Assets.Scripts.Procedural.Trees
             //MeshHelper.DebugArray(_relativeStartPositions, "Relative Start Positions:");
         }
 
+        private List<TmxObject> SortSlices(List<TmxObject> slices)
+        {
+            return slices.OrderBy(o => o.Name).ToList();
+        }
+
         public Polygon2D[] GetSlices()
         {
             return _slices;
@@ -73,6 +83,11 @@ namespace Assets.Scripts.Procedural.Trees
         public string GetName()
         {
             return _name;
+        }
+
+        public float GetThickness()
+        {
+            return SliceThickness;
         }
     }
 }

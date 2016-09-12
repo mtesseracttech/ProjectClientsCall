@@ -38,6 +38,7 @@ public class FeedingBehavior : MonoBehaviour
     {
         ResetingDay();
         CheckingTheDay();
+        GameOver();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -115,8 +116,6 @@ public class FeedingBehavior : MonoBehaviour
 
     private void ResetingDay()
     {
-        
-
         if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 0 && _1stDayAmountOfAcorn && InTheCave)
         {
             HaveAcorn.NutCount = 0;
@@ -153,7 +152,16 @@ public class FeedingBehavior : MonoBehaviour
             DayChecking(false, false, false, false, false, false);
             HaveAcorn.NutCount = 0;
             Debug.Log("5th day");
+            Debug.Log("you win");
+        }
+    }
 
+    void GameOver()
+    {
+        if (!InTheCave && !haveEnoguhAcorns && Cycle.NightHasCome)
+        {
+            Debug.Log("game overs");
+            Time.timeScale = 0;
         }
     }
 }

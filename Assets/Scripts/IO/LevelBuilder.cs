@@ -180,8 +180,12 @@ public class LevelBuilder : MonoBehaviour
                     foreach (var acorn in layer.TmxObjects)
                     {
                         Vector3 acornPos = new Vector3(acorn.X, acorn.Y, 5);
-                        GameObject instantiatedTree = Instantiate(AcornPrefab, acornPos, Quaternion.identity) as GameObject;
-                        _acorns.Add(instantiatedTree);
+                        GameObject instantiatedAcorn = Instantiate(AcornPrefab, acornPos, Quaternion.identity) as GameObject;
+                        if (instantiatedAcorn != null)
+                        {
+                            instantiatedAcorn.transform.parent = transform;
+                            _acorns.Add(instantiatedAcorn);
+                        }
                     }
                 }
             }
@@ -234,8 +238,14 @@ public class LevelBuilder : MonoBehaviour
 
         foreach (var platformData in _platformsData)
         {
-            Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + MapSize.y, platformData.GetScreenOffSet());
+            Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + MapSize.y, platformData.GetScreenOffSet()-1);
             GameObject platform = Instantiate(PlatformRenderer, platformPosition, Quaternion.identity) as GameObject;
+
+            platform.SendMessage("Create", platformData);
+            _platforms.Add(platform);
+
+            platform.transform.parent = transform;
+
             if (platform != null)
             {
                 platform.SendMessage("Create", platformData);
