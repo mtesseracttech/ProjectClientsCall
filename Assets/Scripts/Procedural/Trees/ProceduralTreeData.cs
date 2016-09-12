@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.Procedural.Trees
@@ -15,11 +16,14 @@ namespace Assets.Scripts.Procedural.Trees
 
         public ProceduralTreeData(List<TmxObject> slices, int treesLayer, string name)
         {
+            slices = SortSlices(slices);
+
+
             //Debug.Log("NEW Procedural Tree Data (" + slices[0].Id + ")");
             List<Polygon2D> tempPolys = new List<Polygon2D>();
             List<Vector3> relativeStartPositions = new List<Vector3>();
 
-            _startPosition = new Vector3(slices[0].X, TiledParsingHelper.TiledCompensator(slices[0].Y, LevelBuilder.MapSize.y), (treesLayer + 1) * 5);
+            _startPosition = new Vector3(slices[0].X, TiledParsingHelper.TiledCompensator(slices[0].Y, LevelBuilder.MapSize.y), treesLayer * 5);
             _layerNumber = treesLayer;
             _name = name;
 
@@ -49,6 +53,11 @@ namespace Assets.Scripts.Procedural.Trees
             //Debug.Log("Start Position" + _startPosition);
             //MeshHelper.DebugArray(_slices, "Slices:");
             //MeshHelper.DebugArray(_relativeStartPositions, "Relative Start Positions:");
+        }
+
+        private List<TmxObject> SortSlices(List<TmxObject> slices)
+        {
+            return slices.OrderBy(o => o.Name).ToList();
         }
 
         public Polygon2D[] GetSlices()
