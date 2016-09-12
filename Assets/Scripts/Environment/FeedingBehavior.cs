@@ -18,8 +18,6 @@ public class FeedingBehavior : MonoBehaviour
     private bool _4thDayPassed = false;
     private bool _5thDayPassed = false;
 
-    private bool _gameIsWon;
-    public bool _adayPassed = false;
     public int maxAmount;
     public Inventory HaveAcorn;
     public DayNightCycles Cycle;
@@ -34,7 +32,6 @@ public class FeedingBehavior : MonoBehaviour
     {
         InTheCave = false;
         maxAmount = FirstDayAcorn;
-        _gameIsWon = false;
     }
 
     private void Update()
@@ -87,35 +84,30 @@ public class FeedingBehavior : MonoBehaviour
             {
                DayChecking(true,false,false,false,false,true);
                 CheckingDaysPassed(true,false,false,false,false);
-                _adayPassed = true;
                 Debug.Log("we have for first day");
             }
             else if(HaveAcorn.NutCount == SecondDayAcorn && _1stDayPassed)
             {
                 DayChecking(false, true, false, false, false,true);
                 CheckingDaysPassed(true, true, false, false, false);
-                _adayPassed = true;
                 Debug.Log("we have for second day");
             }
             else if (HaveAcorn.NutCount == ThirdDayAcorn && _2ndDayPassed)
             {
                 DayChecking(false, false, true, false, false,true);
                 CheckingDaysPassed(true, true, true, false, false);
-                _adayPassed = true;
                 Debug.Log("we have for third day");
             }
             else if (HaveAcorn.NutCount == FourthDayAcorn && _3rdDayPassed)
             {
                 DayChecking(false, false, false, true, false,true);
                 CheckingDaysPassed(true, true, true, true, false);
-                _adayPassed = true;
                 Debug.Log("we have for fourth day");
             }
             else if (HaveAcorn.NutCount == FifthDayAcorn && _4thDayPassed)
             {
                 DayChecking(false, false, false, false, true, true);
                 CheckingDaysPassed(true, true, true, true, true);
-                _adayPassed = true;
                 Debug.Log("we have for fifth day");
             }
         }
@@ -123,15 +115,14 @@ public class FeedingBehavior : MonoBehaviour
 
     private void ResetingDay()
     {
-      if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 0 && _1stDayAmountOfAcorn && InTheCave)
+        if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 0 && _1stDayAmountOfAcorn && InTheCave)
         {
             HaveAcorn.NutCount = 0;
             Debug.Log("1st day");
             DayChecking(false, false, false, false, false, false);
-            _adayPassed = false;
             maxAmount = SecondDayAcorn;
         }
-        if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 1 && _2ndDayAmountOfAcorn && InTheCave)
+        else if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 1 && _2ndDayAmountOfAcorn && InTheCave)
         {
             HaveAcorn.NutCount = 0;
             Debug.Log("2nd day");
@@ -139,7 +130,7 @@ public class FeedingBehavior : MonoBehaviour
             maxAmount = ThirdDayAcorn;
 
         }
-        if(!Cycle.NightHasCome && Cycle.DaysHasPassed == 2 && _3rdDayAmountOfAcorn && InTheCave)
+        else if(!Cycle.NightHasCome && Cycle.DaysHasPassed == 2 && _3rdDayAmountOfAcorn && InTheCave)
         {
             HaveAcorn.NutCount = 0;
             Debug.Log("3rd day");
@@ -147,7 +138,7 @@ public class FeedingBehavior : MonoBehaviour
             maxAmount = FourthDayAcorn;
 
         }
-        if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 3 && _4thDayAmountOfAcorn && InTheCave)
+        else if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 3 && _4thDayAmountOfAcorn && InTheCave)
         {
             HaveAcorn.NutCount = 0;
             Debug.Log("4th day");
@@ -155,17 +146,14 @@ public class FeedingBehavior : MonoBehaviour
             maxAmount = FifthDayAcorn;
 
         }
-        if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 4 && _5thDayAmountOfAcorn && InTheCave)
+        else if (!Cycle.NightHasCome && Cycle.DaysHasPassed == 4 && _5thDayAmountOfAcorn && InTheCave)
         {
             DayChecking(false, false, false, false, false, false);
             HaveAcorn.NutCount = 0;
             Debug.Log("5th day");
-            _gameIsWon = true;
             Debug.Log("you win");
-        }
-        if (Cycle.NightHasCome && !Cycle.dayHasCome)
-        {
-            Debug.Log("game over");
+                
+
         }
     }
 }

@@ -6,19 +6,6 @@ public enum SquirrelState
     idling,
     running,
     jumping,
-<<<<<<< HEAD
-    climbing,
-    flying,
-    landing,
-}
-
-public enum Orientation //for later state
-{
-    left,
-    right
-=======
-    flying,
->>>>>>> 9402c6d9b63e9852d5e1df20862465798e36b585
 }
 
 public enum Key
@@ -65,15 +52,8 @@ namespace StateMachine
 
             transitions = new Dictionary<StateTransition, SquirrelState>
             {
-<<<<<<< HEAD
-                { new StateTransition(SquirrelState.idling, Key.up), SquirrelState.jumping },
-                { new StateTransition(SquirrelState.running, Key.up), SquirrelState.jumping },
-                { new StateTransition(SquirrelState.jumping, Key.down), SquirrelState.landing },
-                { new StateTransition(SquirrelState.landing, Key.down), SquirrelState.running }
-=======
                 { new StateTransition(SquirrelState.running, Key.up), SquirrelState.jumping },
                 { new StateTransition(SquirrelState.jumping, Key.down), SquirrelState.running },
->>>>>>> 9402c6d9b63e9852d5e1df20862465798e36b585
             };
         }
 
