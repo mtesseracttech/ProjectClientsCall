@@ -45,14 +45,24 @@ public class SettingManager : MonoBehaviour
 	        message += problems;
 	        message += "Saving settings is not supported because of undefined variables";
 	    }
+	    else
+	    {
+	        message += "Working!";
+	    }
 	    Debug.Log(message);
 
-	}
+        GameSettings temp = SettingsIO.ReadSettingsFromFile("GameSettings.xml");
+        if (temp != null)
+        {
+            _settings = temp;
+        }
+        SetSettings();
+    }
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	    //Load the game
+	    //Load the settings
 	    if (Input.GetKeyDown(KeyCode.O))
 	    {
 	        GameSettings temp = SettingsIO.ReadSettingsFromFile("GameSettings.xml");
@@ -65,7 +75,7 @@ public class SettingManager : MonoBehaviour
 
 	    if (Input.GetKeyDown(KeyCode.P))
 	    {
-	        if (!(Player != null || DayNightCycleManager != null)) //REMOVE INVERSION!!!!
+	        if (!(Player != null || DayNightCycleManager != null)) //REMOVE INVERSION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	        {
                 ComposeSettings();
 	            SettingsIO.SaveSettingsToFile(_settings);
@@ -94,6 +104,7 @@ public class SettingManager : MonoBehaviour
             _settings.DayNightCycleSettings = new DayNightCycleSettings();
         }
 
+        //Get Settings from player script
         _settings.PlayerSettings.JumpingHeight = 1;
         _settings.PlayerSettings.FlyingSpeed = 1;
         _settings.PlayerSettings.RunningSpeed = 1;
@@ -101,6 +112,7 @@ public class SettingManager : MonoBehaviour
         _settings.PlayerSettings.AirDrag = 1;
 
 
+        //Get Settings from DNCM script
         _settings.DayNightCycleSettings.DaySpeed = 1;
         _settings.DayNightCycleSettings.NightSpeed = 1;
     }

@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-down" width="100" height="100" tilewidth="32" tileheight="32" nextobjectid="28">
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="100" height="100" tilewidth="32" tileheight="32" nextobjectid="33">
  <objectgroup name="platforms">
   <object id="22" name="trap" x="260" y="172">
+  	<properties>
+    <property name="depth" type="int" value="600"/>
+    <property name="screenoffset" type="int" value="156"/>
+   </properties>
    <polygon points="0,0 808,68 700,416 84,348"/>
   </object>
   <object id="23" name="temp" x="1552" y="440">
+  	<properties>
+    <property name="depth" type="int" value="200"/>
+    <property name="screenoffset" type="int" value="-100"/>
+   </properties>
    <polygon points="0,0 564,804 -44,800 -536,456"/>
   </object>
   <object id="24" name="Bar" x="408" y="2112">
+  	<properties>
+    <property name="depth" type="int" value="2000"/>
+    <property name="screenoffset" type="int" value="200"/>
+   </properties>
    <polygon points="0,0 1068,-52 1100,332 136,316"/>
   </object>
   <object id="25" name="M" x="368" y="1812">
+   <properties>
+    <property name="depth" type="int" value="500"/>
+    <property name="screenoffset" type="int" value="10"/>
+   </properties>
    <polygon points="0,0 0,-652 208,-660 316,-412 516,-692 744,-692 792,-20 568,-20 560,-440 372,-268 176,-328 176,-24"/>
   </object>
  </objectgroup>

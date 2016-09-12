@@ -1,70 +1,33 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
-
-    private List<Item> inventory = new List<Item>();
-    private ItemDataBase dataBase;
-    public bool addItem;
-
-    void Update()
+    public Text NutsText;
+    public int NutCount;
+    public bool GotAcorn;
+    public FeedingBehavior Feeding;
+   public int Nuts
     {
-        if (addItem)
-        {
-            AddItem(0);
-            Debug.Log("hii");
-            Debug.Log(inventory.Count);
-        }
+        get { return NutCount; }
     }
 
-   
-
-    void AddItem(int id)//With stacking the currentStack count is being added to all of the items of the same id, and more items still fill the inv.
+    private void Update()
     {
-        for (int i = 0; i < inventory.Count; i++)
-        {
-            if (inventory[i].ItemStacked && inventory[i].ItemId == id && inventory[i].ItemValue < inventory[i].ItemValueMax)//Stacking
-            {
-                inventory[i].ItemValue++;//This makes the actual item have a higher current stack
-                break;
-            }
-            if (inventory[i].name == null)
-            {
-               
-                for (int d = 0; d < dataBase.items.Count; d++)
-                {
-                    if (dataBase.items[d].ItemId == id)
-                    {
-                        
-                        inventory[i] = dataBase.items[d];
-                        break;
-                    }
-                }
-                break;
-            }
-        }
+        NutsText.text =  NutCount.ToString() + " / " + Feeding.maxAmount;
+        AccornInInventory();
     }
 
-    void RemoveItem(int id)
+    private void AccornInInventory()
     {
-        for (int i = 0; i < inventory.Count; i++)
+        if (NutCount > 0)
         {
-            if (inventory[i].ItemId == id && inventory[i].ItemValue > 1)
-            {
-                inventory[i].ItemValue--;
-                break;
-            }
-            if (inventory[i].ItemId == id)
-            {
-                inventory[i] = new Item();
-                break;
-            }
+            GotAcorn = true;
+        }
+        else
+        {
+            GotAcorn = false;
         }
     }
-
-
 
 }
