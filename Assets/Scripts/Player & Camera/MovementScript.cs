@@ -14,7 +14,8 @@ public class MovementScript : MonoBehaviour
 
 
     // Public Variables ------------------------
-    public float speed;
+    public float walkSpeed;
+    public float jumpSpeed;
     public float gravity;
     public float jumpHeight;
 
@@ -26,8 +27,6 @@ public class MovementScript : MonoBehaviour
 
     // Private Variables -----------------------
     private SquirrelMachine s;
-
-    private BoxCollider playerCollider;
 
     private Vector2 velocity;
     private Vector2 acceleration;
@@ -48,12 +47,12 @@ public class MovementScript : MonoBehaviour
 
         s = new SquirrelMachine(SquirrelState.running);
 
-        playerCollider = gameObject.GetComponent<BoxCollider>();
         moveDelegate += GroundMovement;
         moveDelegate += ApplyPhysics;
         moveDelegate += CheckCollision;
 
         UpdateLocalVectors();
+        CheckCollision();
     }
 
     void Update()
@@ -89,6 +88,8 @@ public class MovementScript : MonoBehaviour
 
     void ApplyPhysics()
     {
+        if (s.CurrentState == SquirrelState.running)
+            velocity = new Vector2();
         velocity += acceleration;
         transform.position += new Vector3(velocity.x, velocity.y, 0);
         UpdateLocalVectors();
@@ -99,10 +100,10 @@ public class MovementScript : MonoBehaviour
         acceleration -= new Vector2(0, gravity);
 
         if (Input.GetKey(KeyCode.A))
-            acceleration -= new Vector2(speed, 0);
+            acceleration -= new Vector2(jumpSpeed, 0);
 
         if (Input.GetKey(KeyCode.D))
-            acceleration += new Vector2(speed, 0);
+            acceleration += new Vector2(jumpSpeed, 0);
 
         float angle = (_orientation == Orientation.forward? 180 : 0) + Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         transform.eulerAngles = new Vector3(0, 0, 180 + angle);
@@ -137,7 +138,6 @@ public class MovementScript : MonoBehaviour
             UpdateLocalVectors();
             CheckCollision();
             s.MoveNext(Key.down);
-            //Debug.Break();
         }
 
     }
@@ -146,11 +146,11 @@ public class MovementScript : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A))
         {
-            acceleration -= new Vector2(transform.right.x, transform.right.y) * speed;
+            acceleration -= new Vector2(transform.right.x, transform.right.y) * walkSpeed;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            acceleration += new Vector2(transform.right.x, transform.right.y) * speed;
+            acceleration += new Vector2(transform.right.x, transform.right.y) * walkSpeed;
         }
         if (Input.GetKeyDown(KeyCode.W))
             s.MoveNext(Key.up);
@@ -161,72 +161,77 @@ public class MovementScript : MonoBehaviour
             _orientation = Orientation.forward;
         else
             _orientation = Orientation.backward;
+
     }
 
 
     void CheckCollision()
     {
-        RaycastHit frontHit;
-        RaycastHit rearHit;
-        RaycastHit forwardHit;
-
-        // Calculate points -----------------------------------
-        rearHit = Raycast(center + rear, bottom, Color.green);
-
-        if (rearHit.distance == 0 || rearHit.distance > 1.5f)
-            rearHit = Raycast(center + bottom + rear, bottom + front, Color.blue);
-
-        frontHit = Raycast(center + front, bottom, Color.white);
-        forwardHit = Raycast(center + bottom, front, Color.cyan);
-
-        // If player is on flat surface -----------------------
-        if (frontHit.normal == rearHit.normal && frontHit.distance <= 1.5f)
+        if (acceleration != new Vector2())
         {
-            // If player hits wall --------------------------------
-            if (forwardHit.distance != 0 && forwardHit.distance < (transform.lossyScale.x / 2) + 0.2f)
+            RaycastHit frontHit;
+            RaycastHit rearHit;
+            RaycastHit forwardHit;
+
+            // Calculate points -----------------------------------
+            rearHit = Raycast(center + rear, bottom, Color.green);
+
+            if (rearHit.distance == 0 || rearHit.distance > 1.5f)
+                rearHit = Raycast(center + bottom + rear, bottom + front, Color.blue);
+
+            frontHit = Raycast(center + front, bottom, Color.white);
+            forwardHit = Raycast(center + bottom, front, Color.cyan);
+
+            // If player is on flat surface -----------------------
+            if (frontHit.normal == rearHit.normal && frontHit.distance <= 1.5f)
             {
-                Vector3 newPos = ClosestToRaycastHit(forwardHit, center + bottom) + new Vector3(forwardHit.normal.y, -forwardHit.normal.x, 0) * (int)_orientation;
-                Vector3 oldPos = transform.position;
+                // If player hits wall --------------------------------
+                if (forwardHit.distance != 0 && forwardHit.distance < (transform.lossyScale.x / 2) + 0.2f)
+                {
+                    Vector3 newPos = ClosestToRaycastHit(forwardHit, center + bottom) + new Vector3(forwardHit.normal.y, -forwardHit.normal.x, 0) * (int)_orientation;
+                    Vector3 oldPos = transform.position;
 
-                transform.position = newPos - front - bottom;
-                UpdateLocalVectors();
+                    transform.position = newPos - front - bottom;
+                    UpdateLocalVectors();
 
-                float heightDif = Vector3.Dot(center - oldPos, rearHit.normal) + (rearHit.distance - transform.lossyScale.y / 2);
-                float rot = Mathf.Asin(heightDif / transform.lossyScale.x) * Mathf.Rad2Deg;
+                    float heightDif = Vector3.Dot(center - oldPos, rearHit.normal) + (rearHit.distance - transform.lossyScale.y / 2);
+                    float rot = Mathf.Asin(heightDif / transform.lossyScale.x) * Mathf.Rad2Deg;
 
-                transform.RotateAround(center + front + bottom, Vector3.forward, rot * (int)_orientation);
+                    transform.RotateAround(center + front + bottom, Vector3.forward, rot * (int)_orientation);
+                }
+                else if (rearHit.distance <= 1.5f)
+                {
+                    if (_orientation == Orientation.forward)
+                        transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(frontHit.point.y - rearHit.point.y, frontHit.point.x - rearHit.point.x) * Mathf.Rad2Deg);
+                    if (_orientation == Orientation.backward)
+                        transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(rearHit.point.y - frontHit.point.y, rearHit.point.x - frontHit.point.x) * Mathf.Rad2Deg);
+
+                    transform.position = frontHit.point + frontHit.normal * (transform.localScale.y / 2) + (transform.localScale.x / 2) * (-transform.right * (int)_orientation);
+                }
             }
-            else if (rearHit.distance <= 1.5f)
+            else
             {
-                if (_orientation == Orientation.forward)
-                    transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(frontHit.point.y - rearHit.point.y, frontHit.point.x - rearHit.point.x) * Mathf.Rad2Deg);
-                if (_orientation == Orientation.backward)
-                    transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(rearHit.point.y - frontHit.point.y, rearHit.point.x - frontHit.point.x) * Mathf.Rad2Deg);
+                if (frontHit.distance == 0 || frontHit.distance > 1.5f)
+                    frontHit = Raycast(center + front + bottom, bottom - front, Color.blue);
 
-                transform.position = frontHit.point + frontHit.normal * (transform.localScale.y / 2) + (transform.localScale.x / 2) * (-transform.right * (int)_orientation);
-            }
-        }
-        else
-        {
-            if (frontHit.distance == 0 || frontHit.distance > 1.5f)
-                frontHit = Raycast(center + front + bottom, bottom - front, Color.blue);
+                if (frontHit.distance > 0 && frontHit.distance <= 1.5f && rearHit.distance != 0)
+                {
+                    //Set new position
+                    Vector3 oldPos = center;
 
-            if (frontHit.distance > 0 && frontHit.distance <= 1.5f && rearHit.distance != 0)
-            {
-                //Set new position
-                Vector3 oldPos = center;
+                    Vector3 newPosition = ClosestToRaycastHit(frontHit, frontHit.point);
 
-                Vector3 newPosition = ClosestToRaycastHit(frontHit, frontHit.point);
-                transform.position = newPosition - bottom + (transform.localScale.x / 2) * ((-transform.right + new Vector3(0, -0.02f, transform.position.z)) * (int)_orientation);
-                UpdateLocalVectors();
+                    transform.position = newPosition - bottom + rear;
+                    UpdateLocalVectors();
+                    
 
+                    //Calculations for atan2 formula
+                    float totalDistance = Vector3.Dot(center - oldPos, bottom.normalized);
 
-                //Calculations for atan2 formula
-                float totalDistance = Vector3.Dot(center - oldPos, bottom.normalized);
+                    float rot = Mathf.Asin(totalDistance / transform.localScale.x) * Mathf.Rad2Deg * (1.6f);
 
-                float rot = Mathf.Asin(totalDistance / transform.localScale.x) * Mathf.Rad2Deg * (1.6f + velocity.magnitude * 2);
-
-                transform.RotateAround(center + -transform.up * (transform.localScale.y / 2) + (transform.right * (int)_orientation) * (transform.localScale.x / 2), new Vector3(0, 0, -1), rot * (int)_orientation);
+                    transform.RotateAround(center + bottom + front, Vector3.back, rot * (int)_orientation);
+                }
             }
         }
     }
