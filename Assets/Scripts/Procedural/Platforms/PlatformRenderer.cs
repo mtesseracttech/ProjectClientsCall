@@ -166,7 +166,6 @@ public class PlatformRenderer : MonoBehaviour
             uvs.Add(new Vector2(finalVertices[i].x + Vector3.Distance(finalVertices[i], finalVertices[i + 2]), 0));
         }
 
-
         //Creating and Populating the Mesh////
 
         Mesh mesh = new Mesh();

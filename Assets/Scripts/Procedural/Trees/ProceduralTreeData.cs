@@ -5,7 +5,7 @@ namespace Assets.Scripts.Procedural.Trees
 {
     public class ProceduralTreeData
     {
-        public static float SliceThickness = 1f;
+        private const float SliceThickness = 1f;
         private readonly Polygon2D[] _slices;
         private readonly Vector3 _startPosition;
         private readonly Vector3[] _relativeStartPositions;
@@ -73,6 +73,11 @@ namespace Assets.Scripts.Procedural.Trees
         public string GetName()
         {
             return _name;
+        }
+
+        public float GetThickness()
+        {
+            return SliceThickness;
         }
     }
 }

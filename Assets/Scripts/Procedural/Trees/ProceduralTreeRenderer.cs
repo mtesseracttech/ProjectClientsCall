@@ -25,11 +25,13 @@ public class ProceduralTreeRenderer : MonoBehaviour
 
     private void CreateModel()
     {
-        Mesh meshFinal = new Mesh();// = MeshHelper.CreateTestCube();
-        List<Vector3> frontVertices = new List<Vector3>();
+        //The final mesh that all othes will be added to
+        Mesh meshFinal = new Mesh();
 
-        List<List<Vector3>> frontVerticeLists = new List<List<Vector3>>();
         //Front
+
+        List<Vector3> frontVertices = new List<Vector3>();
+        List<List<Vector3>> frontVerticeLists = new List<List<Vector3>>();
 
         for (int i = 0; i < _data.GetSlices().Length; i++)
         {
@@ -115,13 +117,13 @@ public class ProceduralTreeRenderer : MonoBehaviour
         for (int j = 0; j < frontVerticeLists.Count; j++)
         {
             var frontVertexList = frontVerticeLists[j];
-            betweenMeshes.Add(CreateBetweenMesh(frontVertexList.ToArray(), _data.GetRelativeStartPositions()[j].z));
+            betweenMeshes.Add(CreateBetweenMesh(frontVertexList.ToArray(), _data.GetThickness()));
         }
 
-        for (int j = 0; j < backVerticeLists.Count; j++)
+        for (int j = 1; j < backVerticeLists.Count; j++) //The 1 for j is to avoid Z fighting in the middle layer
         {
             var backVertexList = backVerticeLists[j];
-            betweenMeshes.Add(CreateBetweenMesh(backVertexList.ToArray(), -_data.GetRelativeStartPositions()[j].z));
+            betweenMeshes.Add(CreateBetweenMesh(backVertexList.ToArray(), -_data.GetThickness()));
         }
 
 
@@ -134,6 +136,75 @@ public class ProceduralTreeRenderer : MonoBehaviour
             });
         }
 
+        //Back of Front Slices
+
+        List<Vector3> backSliceFrontVertices = new List<Vector3>();
+        List<List<Vector3>> backSliceFrontVerticeLists = new List<List<Vector3>>();
+
+        for (int i = 0; i < _data.GetSlices().Length; i++)
+        {
+            backSliceFrontVerticeLists.Add(new List<Vector3>());
+            foreach (var vertice in _data.GetSlices()[i].GetVertices())
+            {
+                backSliceFrontVertices.Add(new Vector3(
+                    _data.GetRelativeStartPositions()[i].x + vertice.x,
+                    vertice.y,
+                    -_data.GetRelativeStartPositions()[i].z + _data.GetThickness()));
+
+                backSliceFrontVerticeLists[i].Add(new Vector3(
+                    _data.GetRelativeStartPositions()[i].x + vertice.x,
+                    vertice.y,
+                    -_data.GetRelativeStartPositions()[i].z + _data.GetThickness()));
+            }
+
+            Mesh backSliceFrontMesh = CreateMeshFromPoly(_data.GetSlices()[i].GetVertices(),
+                _data.GetRelativeStartPositions()[i].z);
+
+            backSliceFrontMesh.triangles = backSliceFrontMesh.triangles.Reverse().ToArray();
+
+            backSliceFrontMesh.uv = _data.GetSlices()[i].GetVertices();
+
+            meshFinal = MeshHelper.CombineMeshesSingleMaterial(new[]
+            {
+                meshFinal,
+                backSliceFrontMesh
+            });
+        }
+
+        //Back of Back slices
+
+        List<Vector3> backSliceBackVertices = new List<Vector3>();
+        List<List<Vector3>> backSliceBackVerticeLists = new List<List<Vector3>>();
+
+        for (int i = 0; i < _data.GetSlices().Length; i++)
+        {
+            backSliceBackVerticeLists.Add(new List<Vector3>());
+            foreach (var vertice in _data.GetSlices()[i].GetVertices())
+            {
+                backSliceBackVertices.Add(new Vector3(
+                    _data.GetRelativeStartPositions()[i].x + vertice.x,
+                    vertice.y,
+                    _data.GetRelativeStartPositions()[i].z - _data.GetThickness()));
+
+                backSliceBackVerticeLists[i].Add(new Vector3(
+                    _data.GetRelativeStartPositions()[i].x + vertice.x,
+                    vertice.y,
+                    _data.GetRelativeStartPositions()[i].z - _data.GetThickness()));
+            }
+
+            Mesh backSliceBackMesh = CreateMeshFromPoly(_data.GetSlices()[i].GetVertices(),
+                _data.GetRelativeStartPositions()[i].z);
+
+            backSliceBackMesh.uv = _data.GetSlices()[i].GetVertices();
+
+            meshFinal = MeshHelper.CombineMeshesSingleMaterial(new[]
+            {
+                meshFinal,
+                backSliceBackMesh
+            });
+        }
+
+        //Combining of all the vertices
 
         List<Vector3> finalVertices = new List<Vector3>();
 
@@ -143,6 +214,8 @@ public class ProceduralTreeRenderer : MonoBehaviour
         {
             finalVertices.AddRange(betweenMesh.vertices);
         }
+        finalVertices.AddRange(backSliceFrontVertices);
+        finalVertices.AddRange(backSliceBackVertices);
 
 
 
@@ -222,7 +295,7 @@ public class ProceduralTreeRenderer : MonoBehaviour
 
         //FINALIZATION:////////////////////
 
-        //Implementation for proper quads with own vertices and easier to work with order/
+        //Implementation for proper quads with own vertices and easier to work with order
         List<Vector3> finalVertices = new List<Vector3>();
         List<int> finalIndices = new List<int>();
 
@@ -242,17 +315,36 @@ public class ProceduralTreeRenderer : MonoBehaviour
         //Doing the last vertices seperately because wrapping is not working since
         //there are 2 different points where the wrapping is needed at the same time.
 
-        finalVertices.Add(new Vector3(vertices[frontVertices.Length - 1].x, vertices[frontVertices.Length - 1].y,
-            vertices[frontVertices.Length - 1].z));
-        finalVertices.Add(new Vector3(vertices[frontVertices.Length - 1 + frontVertices.Length].x,
-            vertices[frontVertices.Length - 1 + frontVertices.Length].y,
-            vertices[frontVertices.Length - 1 + frontVertices.Length].z));
-        finalVertices.Add(new Vector3(vertices[frontVertices.Length].x, vertices[frontVertices.Length].y,
-            vertices[frontVertices.Length].z));
-        finalVertices.Add(new Vector3(vertices[0].x, vertices[0].y, vertices[0].z));
+        finalVertices.Add(
+            new Vector3(
+                vertices[frontVertices.Length - 1].x,
+                vertices[frontVertices.Length - 1].y,
+                vertices[frontVertices.Length - 1].z)
+        );
+        finalVertices.Add(
+            new Vector3(
+                vertices[frontVertices.Length - 1 + frontVertices.Length].x,
+                vertices[frontVertices.Length - 1 + frontVertices.Length].y,
+                vertices[frontVertices.Length - 1 + frontVertices.Length].z)
+        );
+        finalVertices.Add(
+            new Vector3(
+                vertices[frontVertices.Length].x,
+                vertices[frontVertices.Length].y,
+                vertices[frontVertices.Length].z)
+        );
+        finalVertices.Add(
+            new Vector3(
+                vertices[0].x,
+                vertices[0].y,
+                vertices[0].z)
+        );
 
-        finalIndices.AddRange(MeshConverter.QuadToTri(finalIndiceIterator++, finalIndiceIterator++,
-            finalIndiceIterator++, finalIndiceIterator++));
+        finalIndices.AddRange(
+            MeshConverter.QuadToTri(
+                finalIndiceIterator++, finalIndiceIterator++,
+                finalIndiceIterator++, finalIndiceIterator++)
+        );
 
 
         //Setting the UVs per 4 vertices/////
