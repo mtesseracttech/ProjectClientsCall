@@ -229,6 +229,7 @@ public class ProceduralTreeRenderer : MonoBehaviour
         gameObject.AddComponent<MeshRenderer>();
         gameObject.AddComponent<MeshFilter>().sharedMesh = meshFinal;
         gameObject.GetComponent<MeshRenderer>().material = BarkMaterial;
+        gameObject.AddComponent<MeshCollider>();
     }
 
 
