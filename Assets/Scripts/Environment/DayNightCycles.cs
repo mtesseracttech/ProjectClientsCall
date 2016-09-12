@@ -8,8 +8,6 @@ namespace Environment
         public bool NightHasCome;
         public float Speed;
         public FeedingBehavior behavior;
-        public bool GameOver;
-
 
         [Header("Color changers")]
         public Gradient NightDayColor;
@@ -65,7 +63,7 @@ namespace Environment
             RenderSettings.fogDensity = FogDensityCurve.Evaluate(dot) * FogScale;
 
             UpdatingSpeed();
-            //dot -1 - 1
+
             //day
             if (dot > 0)
             {

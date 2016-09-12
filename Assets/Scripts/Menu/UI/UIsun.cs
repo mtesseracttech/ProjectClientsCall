@@ -8,9 +8,14 @@ public class UIsun : MonoBehaviour
     public Image SunProgressBar;
     public DayNightCycles dayspeed;
 
+    void Start()
+    {
+        SunProgressBar.fillAmount = 0;
+    }
+
     void Update()
     {
             
-      SunProgressBar.fillAmount -= (dayspeed.Speed / 198);
+      SunProgressBar.fillAmount += (dayspeed.Speed * dayspeed.DayRotateSpeed.x/ 198);
     }
 }
