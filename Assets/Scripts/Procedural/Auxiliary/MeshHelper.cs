@@ -4,7 +4,26 @@ using UnityEngine;
 
 public class MeshHelper
 {
-    public static Mesh CombineMeshes(Mesh[] meshes, string newName = "Combined Mesh")
+    public static Mesh CombineMeshesMultiMaterial(Mesh[] meshes, string newName = "SubMesh Mesh")
+    {
+        CombineInstance[] combine = new CombineInstance[meshes.Length];
+
+        for (int i = 0; i < meshes.Length; i++)
+        {
+            combine[i].mesh = meshes[i];
+        }
+
+        Mesh returnMesh = new Mesh();
+        returnMesh.CombineMeshes(combine, false);
+        returnMesh.name = newName;
+
+        returnMesh.RecalculateNormals();
+        returnMesh.RecalculateBounds();
+
+        return returnMesh;
+    }
+
+    public static Mesh CombineMeshesSingleMaterial(Mesh[] meshes, string newName = "Combined Mesh")
     {
         CombineInstance[] combine = new CombineInstance[meshes.Length];
 
@@ -24,7 +43,7 @@ public class MeshHelper
     }
 
 
-    private static Mesh CreateTestCube()
+    public static Mesh CreateTestCube()
     {
         /*  1 2
         L1: 0 3
@@ -62,26 +81,25 @@ public class MeshHelper
     }
 
 
-    public static void DebugArray<T>(T[] array)
+    public static void DebugArray<T>(T[] array, string addedMessage = "")
     {
+        string debugString = addedMessage + "\n";
         if (array == null)
         {
-            Debug.Log("Array is null");
+            debugString += "Array is Null";
         }
         else if (array.Length < 1)
         {
-            Debug.Log("Array is null");
+            debugString += "Array is Empty";
         }
         else
         {
-            string debugString = "Array Debug\n";
-            foreach (var o in array)
+            for (int i = 0;  i < array.Length;  i++)
             {
-                debugString += o + "\n";
+                debugString += i + ". " + array[i] + "\n";
             }
-
-            Debug.Log(debugString);
         }
+        Debug.Log(debugString);
     }
 
     public static bool IsPolyClockWise(Vector2[] polyPoints)
@@ -90,11 +108,11 @@ public class MeshHelper
 
         for (int i = 0; i < polyPoints.Length - 1; i++)
         {
-            counter += (polyPoints[i].x - polyPoints[i + 1].x) *
-                       (polyPoints[i].y + polyPoints[i].y);
+            counter += (polyPoints[i+1].x - polyPoints[i].x) *
+                       (polyPoints[i+1].y + polyPoints[i].y);
         }
-        counter += (polyPoints[polyPoints.Length - 1].x - polyPoints[0].x) *
-                   (polyPoints[polyPoints.Length - 1].y + polyPoints[0].y);
+        counter += (polyPoints[0].x - polyPoints[polyPoints.Length - 1].x) *
+                   (polyPoints[0].y + polyPoints[polyPoints.Length - 1].y);
 
         if (counter > 0) return true;
         else return false;

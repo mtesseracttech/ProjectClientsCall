@@ -48,12 +48,11 @@ public class TmxMap
                            + "Object ID: " + tmxObject.Id + "\n"
                            + "Object Position: " + tmxObject.X + "," + tmxObject.Y + "\n"
                            + "Object Size: " + tmxObject.Width + "," + tmxObject.Height + "\n\n";
-                    
+
 
                     if (tmxObject.ObjectProperties != null && tmxObject.ObjectProperties.Properties != null && tmxObject.ObjectProperties.Properties.Length > 0)
                     {
                         var properties = tmxObject.ObjectProperties.Properties;
-                        Debug.Log("PROPERTY DEBUG: " + properties[0].Name + " " + properties[0].Value);
                         debugString += "Properties: \n";
 
                         foreach (var property in properties)
@@ -66,7 +65,7 @@ public class TmxMap
             }
             else
             {
-                debugString += 0 + "\n\n";
+                debugString += "No objects are in this layer.\n\n";
             }
         }
         Debug.Log(debugString);
