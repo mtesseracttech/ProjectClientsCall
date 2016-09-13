@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using StateMachine;
-using System;
+
+// Enums -----------------------------------
+public enum Orientation
+{
+    forward = 1,
+    backward = -1,
+    upward = 2,
+    downward = -2
+}
 
 public class MovementScript : MonoBehaviour
 {
-    // Enums -----------------------------------
-    private enum Orientation
-    {
-        forward = 1,
-        backward = -1
-    }
-
-
     // Public Variables ------------------------
     public float walkSpeed;
     public float jumpSpeed;
@@ -22,15 +22,18 @@ public class MovementScript : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float drag;
 
-    private Orientation _orientation;
+    public float zPos = 0;
 
+    public Orientation _orientation = Orientation.forward;
+
+    public SquirrelMachine s;
 
     // Private Variables -----------------------
-    private SquirrelMachine s;
+
+    
 
     private Vector2 velocity;
     private Vector2 acceleration;
-
 
     private Vector3 center;
     private Vector3 bottom; //Bottom middle
@@ -43,13 +46,9 @@ public class MovementScript : MonoBehaviour
     // ----------------------------------------
     void Start()
     {
-        GetComponent<MeshRenderer>().enabled = true;
+        GetComponent<MeshRenderer>().enabled = false;
 
-        s = new SquirrelMachine(SquirrelState.running);
-
-        moveDelegate += GroundMovement;
-        moveDelegate += ApplyPhysics;
-        moveDelegate += CheckCollision;
+        s = new SquirrelMachine(SquirrelState.idling);
 
         UpdateLocalVectors();
         CheckCollision();
@@ -57,53 +56,97 @@ public class MovementScript : MonoBehaviour
 
     void Update()
     {
-        // Reset acceleration and apply drag
         acceleration = new Vector2();
         velocity *= 1 - drag;
-        //
 
+        CheckButtons();
+        CheckState();
+
+        if (moveDelegate != null)
+            moveDelegate();
+
+        transform.position = new Vector3(transform.position.x, transform.position.y, zPos);
+    }
+
+    void CheckState()
+    {
         if (s.HasChanged() == true)
         {
             moveDelegate = null;
             switch (s.CurrentState)
             {
                 case SquirrelState.running:
-                    moveDelegate += GroundMovement;
                     moveDelegate += ApplyPhysics;
                     moveDelegate += CheckCollision;
                     break;
 
                 case SquirrelState.jumping:
-                    acceleration += new Vector2(transform.up.x, transform.up.y) * jumpHeight;
                     moveDelegate += AirMovement;
                     moveDelegate += ApplyPhysics;
                     break;
+
+                default: break;
+                    
             }
         }
-        if (moveDelegate != null)
-            moveDelegate();
+    }
 
-        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+    void CheckButtons()
+    {
+        if (s.CurrentState == SquirrelState.running && velocity.magnitude == 0)
+            s.MoveNext(Key.land);
+
+        if (Input.GetKey(KeyCode.W))
+            ApplyVerticalMotion(Orientation.upward);
+
+        if (Input.GetKey(KeyCode.A))
+            ApplySidewardMotion(Orientation.backward);
+
+        if (Input.GetKey(KeyCode.D))
+            ApplySidewardMotion(Orientation.forward);
+    }
+
+    void ApplySidewardMotion(Orientation o)
+    {
+        //Idle -> running
+        if (s.CurrentState == SquirrelState.idling)
+            s.MoveNext(Key.move);
+
+        //Running motion
+        if (s.CurrentState == SquirrelState.idling || s.CurrentState == SquirrelState.running)
+        {
+            acceleration += new Vector2(transform.right.x, transform.right.y) * walkSpeed * (int)o;
+            _orientation = o;
+        }
+        //Flying motion
+        if (s.CurrentState == SquirrelState.jumping)
+            acceleration += new Vector2(jumpSpeed, 0) * (int)o;
+    }
+
+    void ApplyVerticalMotion(Orientation o)
+    {
+        if ((s.CurrentState == SquirrelState.idling || s.CurrentState == SquirrelState.running) && o == Orientation.upward)
+        {
+            acceleration += new Vector2(0, jumpHeight);
+            s.MoveNext(Key.jump);
+        }
     }
 
     void ApplyPhysics()
     {
         if (s.CurrentState == SquirrelState.running)
-            velocity = new Vector2();
-        velocity += acceleration;
-        transform.position += new Vector3(velocity.x, velocity.y, 0);
+            transform.position += new Vector3(acceleration.x, acceleration.y, 0);
+
+        if (s.CurrentState == SquirrelState.jumping)
+            transform.position += new Vector3(velocity.x, velocity.y, 0);
+
         UpdateLocalVectors();
     }
 
     void AirMovement()
     {
         acceleration -= new Vector2(0, gravity);
-
-        if (Input.GetKey(KeyCode.A))
-            acceleration -= new Vector2(jumpSpeed, 0);
-
-        if (Input.GetKey(KeyCode.D))
-            acceleration += new Vector2(jumpSpeed, 0);
+        velocity += acceleration;
 
         float angle = (_orientation == Orientation.forward ? 180 : 0) + Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         transform.eulerAngles = new Vector3(0, 0, 180 + angle);
@@ -134,36 +177,12 @@ public class MovementScript : MonoBehaviour
         {
             transform.position = hit0.point + rear + (hit0.distance == hit2.distance ? bottom : -bottom);
             transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(-hit0.normal.x, hit0.normal.y) * Mathf.Rad2Deg);
-            print(transform.eulerAngles.z);
             UpdateLocalVectors();
             CheckCollision();
-            s.MoveNext(Key.down);
+            s.MoveNext(Key.land);
         }
 
     }
-
-    void GroundMovement()
-    {
-        if (Input.GetKey(KeyCode.A))
-        {
-            acceleration -= new Vector2(transform.right.x, transform.right.y) * walkSpeed;
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            acceleration += new Vector2(transform.right.x, transform.right.y) * walkSpeed;
-        }
-        if (Input.GetKeyDown(KeyCode.W))
-            s.MoveNext(Key.up);
-
-        if (velocity == new Vector2())
-            return;
-        else if (Vector2.Dot(transform.right.normalized, new Vector2(velocity.x, velocity.y).normalized) > 0)
-            _orientation = Orientation.forward;
-        else
-            _orientation = Orientation.backward;
-
-    }
-
 
     void CheckCollision()
     {
@@ -180,7 +199,7 @@ public class MovementScript : MonoBehaviour
                 rearHit = Raycast(center + bottom + rear, bottom + front, Color.blue);
 
             frontHit = Raycast(center + front, bottom, Color.white);
-            forwardHit = Raycast(center + bottom, front, Color.cyan);
+            forwardHit = Raycast(center + bottom * 0.99f, front, Color.cyan);
 
             // If player is on flat surface -----------------------
             if (frontHit.normal == rearHit.normal && frontHit.distance <= 1.5f)
