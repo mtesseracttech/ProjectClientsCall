@@ -1,7 +1,7 @@
-using System;
 using UnityEngine;
+using UnityStandardAssets.ImageEffects;
 
-namespace UnityStandardAssets.ImageEffects
+namespace Standard_Assets.Effects.ImageEffects.Scripts
 {
     [ExecuteInEditMode]
     [RequireComponent (typeof(Camera))]
@@ -91,7 +91,7 @@ namespace UnityStandardAssets.ImageEffects
         void CreateComputeResources () {
             if (cbDrawArgs == null)
             {
-                cbDrawArgs = new ComputeBuffer (1, 16, ComputeBufferType.IndirectArguments);
+                cbDrawArgs = new ComputeBuffer (1, 16);
                 var args= new int[4];
                 args[0] = 0; args[1] = 1; args[2] = 0; args[3] = 0;
                 cbDrawArgs.SetData (args);
