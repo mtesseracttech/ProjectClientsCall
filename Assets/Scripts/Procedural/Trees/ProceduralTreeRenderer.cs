@@ -77,7 +77,10 @@ public class ProceduralTreeRenderer : MonoBehaviour
             List<Vector2> slice = new List<Vector2>();
             for (int j = _data.GetSlices()[i].GetVertices().Length - 1; j >= 0 ; j--)
             {
-                slice.Add(new Vector2(_data.GetSlices()[i].GetVertices()[j].x, _data.GetSlices()[i].GetVertices()[j].y));
+                slice.Add(new Vector2(
+                        _data.GetSlices()[i].GetVertices()[j].x,
+                        _data.GetSlices()[i].GetVertices()[j].y)
+                );
             }
             slicesBack[i] = new Polygon2D(slice);
         }
@@ -95,11 +98,13 @@ public class ProceduralTreeRenderer : MonoBehaviour
                 backVertices.Add(new Vector3(
                     _data.GetRelativeStartPositions()[i].x + vertex.x,
                     vertex.y,
-                    _data.GetRelativeStartPositions()[i].z));
+                    _data.GetRelativeStartPositions()[i].z)
+                );
                 backVerticeLists[i].Add(new Vector3(
                     _data.GetRelativeStartPositions()[i].x + vertex.x,
                     vertex.y,
-                    _data.GetRelativeStartPositions()[i].z));
+                    _data.GetRelativeStartPositions()[i].z)
+                );
             }
 
             //finalVertices.AddRange(meshBack.vertices);
@@ -120,13 +125,19 @@ public class ProceduralTreeRenderer : MonoBehaviour
         for (int j = 1; j < frontVerticeLists.Count; j++)
         {
             var frontVertexList = frontVerticeLists[j];
-            betweenMeshes.Add(CreateBetweenMesh(frontVertexList.ToArray(), _data.GetThickness()));
+            betweenMeshes.Add(CreateBetweenMesh(
+                frontVertexList.ToArray(),
+                _data.GetThickness())
+            );
         }
 
         for (int j = 0; j < backVerticeLists.Count; j++) //The 1 for j is to avoid Z fighting in the middle layer
         {
             var backVertexList = backVerticeLists[j];
-            betweenMeshes.Add(CreateBetweenMesh(backVertexList.ToArray(), -_data.GetThickness()));
+            betweenMeshes.Add(CreateBetweenMesh(
+                backVertexList.ToArray(),
+                -_data.GetThickness())
+            );
         }
 
 
@@ -264,7 +275,6 @@ public class ProceduralTreeRenderer : MonoBehaviour
     {
         //Container declarations///////////
         List<Vector3> vertices = new List<Vector3>();
-        List<int> indices = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
 
         //PREPARATION://///////////////////
@@ -277,21 +287,6 @@ public class ProceduralTreeRenderer : MonoBehaviour
             vertices.Add(new Vector3(fV.x, fV.y, fV.z + offsetDepth)); // is the offset
         }
 
-        //Creating the Indices from Quads//
-
-        int offs = frontVertices.Length;
-        for (int i = 0; i < frontVertices.Length - 1; i++)
-        {
-            indices.AddRange(MeshConverter.QuadToTri(
-                i, i + offs, i + 1 + offs, i + 1
-            ));
-        }
-
-        indices.AddRange(MeshConverter.QuadToTri(frontVertices.Length - 1,
-            frontVertices.Length - 1 + frontVertices.Length,
-            frontVertices.Length, 0));
-
-
         //FINALIZATION:////////////////////
 
         //Implementation for proper quads with own vertices and easier to work with order
@@ -299,6 +294,7 @@ public class ProceduralTreeRenderer : MonoBehaviour
         List<int> finalIndices = new List<int>();
 
         int finalIndiceIterator = 0;
+        int offs = frontVertices.Length;
 
         for (int i = 0; i < frontVertices.Length - 1; i++)
         {
@@ -354,7 +350,6 @@ public class ProceduralTreeRenderer : MonoBehaviour
             uvs.Add(new Vector2(0, finalVertices[i].y));
             uvs.Add(new Vector2(0, finalVertices[i].y + Vector3.Distance(finalVertices[i], finalVertices[i + 2])));
             uvs.Add(new Vector2(1, finalVertices[i].y + Vector3.Distance(finalVertices[i], finalVertices[i + 2])));
-
         }
 
 
