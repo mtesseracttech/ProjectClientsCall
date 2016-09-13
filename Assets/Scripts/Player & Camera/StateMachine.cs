@@ -3,15 +3,16 @@ using System.Collections.Generic;
 
 public enum SquirrelState
 {
-    idling,
-    running,
-    jumping,
+    idling = 0,
+    running = 1,
+    jumping = 2,
 }
 
 public enum Key
 {
-    up,
-    down,
+    jump,
+    land,
+    move
 }
 
 namespace StateMachine
@@ -52,8 +53,11 @@ namespace StateMachine
 
             transitions = new Dictionary<StateTransition, SquirrelState>
             {
-                { new StateTransition(SquirrelState.running, Key.up), SquirrelState.jumping },
-                { new StateTransition(SquirrelState.jumping, Key.down), SquirrelState.running },
+                { new StateTransition(SquirrelState.running, Key.jump), SquirrelState.jumping },
+                { new StateTransition(SquirrelState.idling, Key.jump), SquirrelState.jumping },
+                { new StateTransition(SquirrelState.jumping, Key.land), SquirrelState.running },
+                { new StateTransition(SquirrelState.running, Key.land), SquirrelState.idling },
+                { new StateTransition(SquirrelState.idling, Key.move), SquirrelState.running },
             };
         }
 

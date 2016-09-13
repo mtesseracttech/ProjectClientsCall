@@ -3,17 +3,26 @@ using System.Collections;
 
 public class Smoothing : MonoBehaviour {
 
-    public Transform parentAngle;
-    Quaternion childAngle;
+    public Transform parent;
+    public Animator anim;
+    private MovementScript movement;
 
 	void Start () {
+        movement = parent.GetComponent<MovementScript>();
+        transform.position = parent.position;
+
+        
 	}
 	
-	// Update is called once per frame
+
 	void Update ()
     {
-        Vector3 pRV = parentAngle.eulerAngles;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(new Vector3( pRV.x, pRV.y, pRV.z + 90f)) , 0.2f);
-        transform.position += (parentAngle.position - transform.position) * 0.3f;
+        anim.SetInteger("State", (int)movement.s.CurrentState);
+
+        float angle = movement._orientation == Orientation.forward ? 0 : 180;
+
+        Vector3 pRV = parent.eulerAngles;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(new Vector3( 0, 0 + angle, Mathf.Sign((int)movement._orientation) * pRV.z + 90f)) , 0.6f);
+        transform.position += (parent.position - transform.position) * 0.3f;
 	}
 }
