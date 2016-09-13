@@ -1,11 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
 using Assets.Scripts.IO.Tiled;
 using Assets.Scripts.Procedural.Trees;
-using UnityEditor;
+
 
 public class LevelBuilder : MonoBehaviour
 {
@@ -24,35 +22,46 @@ public class LevelBuilder : MonoBehaviour
     [Header("Other")]
     public GameObject Player;
 
-    private TmxMap map;
-    private Vector3 _playerSpawn;
-    private List<GameObject> _trees;
+    //Data containers for the instantiated objects
     private List<TreeData> _treesData;
-    private List<GameObject> _platforms;
     private List<PlatformData> _platformsData;
-    private List<GameObject> _proceduralTrees;
+    private List<GameObject> _platforms;
     private List<ProceduralTreeData> _proceduralTreesData;
+
+    //Collections of all the instantiated gameobjects
+    private List<GameObject> _trees;
+    private List<GameObject> _proceduralTrees;
     private List<GameObject> _acorns;
+
+    //Other Data Containers
+    private TmxMap _map;
+    private Vector3 _playerSpawn;
+
+    //Other information
     public static Vector2 MapSize;
 
 
+    //Initialization
     void Start ()
 	{
 	    CreateLevel();
 	    DebugLevel();
 	}
 
+
+    //Gets a TmxMap object from either a given Tmx file (priority, but has to be passed as a txt file)
+    //or a file location and starts interpreting the contained data
     private void CreateLevel()
     {
         if (TmxFile != null)
         {
-            map = TmxReader.ReadLevel(TmxFile);
+            _map = TmxReader.ReadLevel(TmxFile);
         }
         else
         {
-            map = TmxReader.ReadLevel(TmxFileName);
+            _map = TmxReader.ReadLevel(TmxFileName);
         }
-        if (map == null)
+        if (_map == null)
         {
             Debug.Log("NO LEVEL WAS LOADED!");
         }
@@ -60,7 +69,7 @@ public class LevelBuilder : MonoBehaviour
         {
             Debug.Log("Level was successfully loaded");
 
-            MapSize = new Vector2(map.Width * map.TileWidth, map.Height * map.TileHeight);
+            MapSize = new Vector2(_map.Width * _map.TileWidth, _map.Height * _map.TileHeight);
 
             if(PlatformRenderer != null) CreatePlatforms();
             else Debug.Log("No PlatformRenderer was specified!");
@@ -80,9 +89,11 @@ public class LevelBuilder : MonoBehaviour
         }
     }
 
+    //Gets a TmxObject from the layer called "playerspawn" and if only 1 has been found,
+    //will create a spawning position for the player there
     private void SetPlayerSpawn()
     {
-        foreach (var layer in map.TmxObjectLayers)
+        foreach (var layer in _map.TmxObjectLayers)
         {
             if (layer.Name.ToLower().Contains("playerspawn"))
             {
@@ -103,16 +114,21 @@ public class LevelBuilder : MonoBehaviour
         else Debug.Log("No player spawn was created");
     }
 
+    //Builds a data tree of data for the trees defined in the format:
+    //LayerName: "SliceTrees#" ObjectName: "Tree#_Slice#"
+    //After data tree has been compiled successfully, the trees are instantiated and build procedurally
     private void CreateProceduralTrees()
     {
         _proceduralTreesData = new List<ProceduralTreeData>();
         _proceduralTrees = new List<GameObject>();
 
-        List<List<TmxObject>> treesRawData = new List<List<TmxObject>>(); //Represents the trees
         List<int> treesLayers = new List<int>();
         List<string> treesNames = new List<string>();
 
-        foreach (var layer in map.TmxObjectLayers)
+        List<List<TmxObject>> treesRawData = new List<List<TmxObject>>(); //Represents the trees
+
+        //Splices the Objects up into layers that belong together
+        foreach (var layer in _map.TmxObjectLayers)
         {
             if (layer.Name.ToLower().Contains("slicetrees"))
             {
@@ -147,30 +163,32 @@ public class LevelBuilder : MonoBehaviour
             }
         }
 
-        MeshHelper.DebugArray(treesNames.ToArray(), "TREE NAMES:");
-
+        //Combines the tree data into neat packets that are self-contained and easy to handle
         for (int index = 0; index < treesRawData.Count; index++)
         {
             _proceduralTreesData.Add(new ProceduralTreeData(treesRawData[index], treesLayers[index], treesNames[index]));
         }
 
+        //Instantiates and creates the trees procedurally
         foreach (ProceduralTreeData treeData in _proceduralTreesData)
         {
             Vector3 location = treeData.GetStartPosition();
             GameObject tree = Instantiate(ProceduralTreeRenderer, location, Quaternion.identity) as GameObject;
             if (tree != null)
             {
-                tree.SendMessage("Create", treeData);
+                tree.SendMessage("Create", treeData); //This is the part that triggers the procedural instantiation
                 _proceduralTrees.Add(tree);
             }
         }
     }
 
+
+    //Instantiates acorn prefabs on the positions of every object in the "acorns" layer
     private void CreateAcorns()
     {
         _acorns = new List<GameObject>();
 
-        foreach (var layer in map.TmxObjectLayers)
+        foreach (var layer in _map.TmxObjectLayers)
         {
             string name = layer.Name;
             if (name.Contains("acorns"))
@@ -192,12 +210,14 @@ public class LevelBuilder : MonoBehaviour
         }
     }
 
+    //Instantiates tree prefabs on every Object in the "treelayer"
     private void CreateTrees()
     {
         _trees = new List<GameObject>();
         _treesData = new List<TreeData>();
 
-        foreach (var layer in map.TmxObjectLayers)
+        //Compiling data
+        foreach (var layer in _map.TmxObjectLayers)
         {
             string name = layer.Name;
             if (name.Contains("treelayer"))
@@ -213,6 +233,7 @@ public class LevelBuilder : MonoBehaviour
             }
         }
 
+        //Instantiation
         foreach (var treeData in _treesData)
         {
             GameObject instantiatedTree = Instantiate(TreePrefab, treeData.GetPosition(), treeData.GetRotation()) as GameObject;
@@ -220,12 +241,14 @@ public class LevelBuilder : MonoBehaviour
         }
     }
 
+    //Creates procedurally generated platforms from TMX data in the platforms layer
     private void CreatePlatforms()
     {
         _platforms = new List<GameObject>();
         _platformsData = new List<PlatformData>();
 
-        foreach (var layer in map.TmxObjectLayers)
+        //Compiling data
+        foreach (var layer in _map.TmxObjectLayers)
         {
             if (layer.Name.ToLower().Contains("platforms"))
             {
@@ -236,6 +259,7 @@ public class LevelBuilder : MonoBehaviour
             }
         }
 
+        //Instantiation
         foreach (var platformData in _platformsData)
         {
             Vector3 platformPosition = new Vector3(platformData.GetStartPos().x, - platformData.GetStartPos().y + MapSize.y, platformData.GetScreenOffSet()-1);
@@ -246,18 +270,16 @@ public class LevelBuilder : MonoBehaviour
 
             platform.transform.parent = transform;
 
-            if (platform != null)
-            {
-                platform.SendMessage("Create", platformData);
-                _platforms.Add(platform);
-            }
+            platform.SendMessage("Create", platformData);
+            _platforms.Add(platform);
         }
     }
 
 
+    //Debugs prints out all of the level info
     private void DebugLevel()
     {
-        if(map != null) map.PrintInfo();
+        if(_map!=null) _map.PrintInfo();
     }
 
 
@@ -271,12 +293,16 @@ public class LevelBuilder : MonoBehaviour
 	    }
 	}
 
+    //Is called when the tester wants to change the level on the fly and presses "L"
     private void RebuildLevel()
     {
         DestroyAllGameData();
         Start();
     }
 
+
+    //Destroys all game objects in the level
+    //TODO: ADDING THE NEW OBJECTS AND CHECKING FOR COMPLETION!!!
     private void DestroyAllGameData()
     {
         //Empty and Nullify Gameobject Lists
@@ -292,6 +318,7 @@ public class LevelBuilder : MonoBehaviour
         DestroyGameObjectList(_acorns);
     }
 
+    //Destroys all gameobjects in the given list
     private void DestroyGameObjectList(List<GameObject> gameObjects)
     {
         if (gameObjects != null)
@@ -304,6 +331,7 @@ public class LevelBuilder : MonoBehaviour
         }
     }
 
+    //Empties the entire list
     private void EmptyList<T>(List<T> list)
     {
         if (list != null && list.Count > 0)

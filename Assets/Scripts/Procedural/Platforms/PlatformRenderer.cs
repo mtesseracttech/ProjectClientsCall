@@ -9,12 +9,14 @@ public class PlatformRenderer : MonoBehaviour
     private PlatformData _data;
     public Material SideMaterial;
     public Material TopMaterial;
+    public MeshCollider collider;
 
     public void Create(PlatformData data)
     {
         _data = data;
         SetInfo();
         CreateModel();
+        collider = gameObject.AddComponent<MeshCollider>();
     }
 
     private void SetInfo()
