@@ -1,11 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
 using Assets.Scripts.IO.Tiled;
 using Assets.Scripts.Procedural.Trees;
-using UnityEditor;
+
 
 public class LevelBuilder : MonoBehaviour
 {
