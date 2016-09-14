@@ -12,6 +12,12 @@ public class ProceduralTreeRenderer : MonoBehaviour
 
     public void Create(ProceduralTreeData data)
     {
+        if (_data != null)
+        {
+            Debug.Log("Create for " + _data.GetName() + " was called a second time, this is not allowed!");
+            return;
+        }
+
         _data = data;
 
         SetInfo();

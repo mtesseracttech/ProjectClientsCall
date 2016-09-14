@@ -327,9 +327,6 @@ public class LevelBuilder : MonoBehaviour
             _platforms.Add(platform);
 
             platform.transform.parent = transform;
-
-            platform.SendMessage("Create", platformData);
-            _platforms.Add(platform);
         }
     }
 

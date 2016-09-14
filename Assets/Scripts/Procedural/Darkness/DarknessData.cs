@@ -54,7 +54,12 @@ namespace Assets.Scripts.Procedural.Darkness
 
         public override string ToString()
         {
-            return "start: " + _start + " end: " + _end;
+            return "Start: " + _start + " End: " + _end;
+        }
+
+        public string GetName()
+        {
+            return "Darkness - " + ToString();
         }
     }
 }
