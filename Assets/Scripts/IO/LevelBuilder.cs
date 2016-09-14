@@ -1,8 +1,12 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Assets.Scripts;
 using Assets.Scripts.IO.Tiled;
+using Assets.Scripts.Procedural.Darkness;
 using Assets.Scripts.Procedural.Trees;
+using Debug = UnityEngine.Debug;
 
 
 public class LevelBuilder : MonoBehaviour
@@ -18,6 +22,7 @@ public class LevelBuilder : MonoBehaviour
     [Header("Prefabs")]
     public GameObject TreePrefab;
     public GameObject AcornPrefab;
+    public GameObject DarknessPrefab;
 
     [Header("Other")]
     public GameObject Player;
@@ -27,11 +32,14 @@ public class LevelBuilder : MonoBehaviour
     private List<PlatformData> _platformsData;
     private List<GameObject> _platforms;
     private List<ProceduralTreeData> _proceduralTreesData;
+    private List<DarknessData> _darknessPaths;
 
     //Collections of all the instantiated gameobjects
     private List<GameObject> _trees;
     private List<GameObject> _proceduralTrees;
     private List<GameObject> _acorns;
+    private List<GameObject> _darkness;
+
 
     //Other Data Containers
     private TmxMap _map;
@@ -80,12 +88,62 @@ public class LevelBuilder : MonoBehaviour
             if(TreePrefab != null) CreateTrees();
             else Debug.Log("No Tree prefab was specified!");
 
-
             if(AcornPrefab != null) CreateAcorns();
             else Debug.Log("No Acorn Prefab was specified!");
 
             if (Player != null) SetPlayerSpawn();
             else Debug.Log("No Player linked was specified!");
+            
+            if (DarknessPrefab != null) CreateDarknessPaths();
+            else Debug.Log("No Darkness Prefabs were specified");
+            
+        }
+    }
+
+    private void CreateDarknessPaths()
+    {
+        _darkness = new List<GameObject>();
+        _darknessPaths = new List<DarknessData>();
+
+        const int spacing = 6;
+        const int zDist = -5;
+
+
+        Vector2 darknessIntervals = new Vector2(MapSize.x / spacing, MapSize.y / spacing);
+
+        List<Vector3> darknessSpawnPoints = new List<Vector3>();
+        
+        /*
+        for (int i = 0; i <= spacing * 2; i++)
+        {
+            darknessSpawnPoints.Add(new Vector3((darknessIntervals.x * i) / 2, 0, zDist));
+            darknessSpawnPoints.Add(new Vector3((darknessIntervals.x * i) / 2, MapSize.y, zDist));
+        }
+        */
+        
+        for (int i = 0; i <= spacing; i++)
+        {
+            darknessSpawnPoints.Add(new Vector3(0, darknessIntervals.y * i, zDist));
+            darknessSpawnPoints.Add(new Vector3(MapSize.x, darknessIntervals.y * i, zDist));
+        }
+        
+
+        Utility.DebugArray(darknessSpawnPoints.ToArray(), "DarknessSpawnPoints:");
+
+        foreach (var spawnPoint in darknessSpawnPoints)
+        {
+            //_darknessPaths.Add(new DarknessData(spawnPoint, new Vector3(MapSize.x/2, MapSize.y/2, zDist)));
+            _darknessPaths.Add(new DarknessData(spawnPoint, new Vector3(MapSize.x/2, spawnPoint.y, zDist), 3000, 10));
+        }
+
+        foreach (var path in _darknessPaths)
+        {
+            GameObject instantiatedDarkness = Instantiate(DarknessPrefab, path.Start(), Quaternion.identity) as GameObject;
+            _darkness.Add(instantiatedDarkness);
+            if (instantiatedDarkness != null)
+            {
+                instantiatedDarkness.SendMessage("Create", path);
+            }
         }
     }
 
@@ -291,6 +349,12 @@ public class LevelBuilder : MonoBehaviour
 	    {
 	        RebuildLevel();
 	    }
+
+	    foreach (var path in _darknessPaths)
+	    {
+	        Debug.DrawLine(path.Start(), path.End());
+	    }
+        
 	}
 
     //Is called when the tester wants to change the level on the fly and presses "L"

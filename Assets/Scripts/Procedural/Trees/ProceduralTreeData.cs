@@ -51,8 +51,8 @@ namespace Assets.Scripts.Procedural.Trees
             _relativeStartPositions = relativeStartPositions.ToArray();
             //Debug.Log("Layer Number: " + _layerNumber);
             //Debug.Log("Start Position" + _startPosition);
-            //MeshHelper.DebugArray(_slices, "Slices:");
-            //MeshHelper.DebugArray(_relativeStartPositions, "Relative Start Positions:");
+            //Utility.DebugArray(_slices, "Slices:");
+            //Utility.DebugArray(_relativeStartPositions, "Relative Start Positions:");
         }
 
         private List<TmxObject> SortSlices(List<TmxObject> slices)

@@ -80,28 +80,6 @@ public class MeshHelper
         return mesh;
     }
 
-
-    public static void DebugArray<T>(T[] array, string addedMessage = "")
-    {
-        string debugString = addedMessage + "\n";
-        if (array == null)
-        {
-            debugString += "Array is Null";
-        }
-        else if (array.Length < 1)
-        {
-            debugString += "Array is Empty";
-        }
-        else
-        {
-            for (int i = 0;  i < array.Length;  i++)
-            {
-                debugString += i + ". " + array[i] + "\n";
-            }
-        }
-        Debug.Log(debugString);
-    }
-
     public static bool IsPolyClockWise(Vector2[] polyPoints)
     {
         float counter = 0;
