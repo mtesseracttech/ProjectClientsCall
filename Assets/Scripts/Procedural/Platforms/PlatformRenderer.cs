@@ -9,14 +9,18 @@ public class PlatformRenderer : MonoBehaviour
     private PlatformData _data;
     public Material SideMaterial;
     public Material TopMaterial;
-    public MeshCollider collider;
 
     public void Create(PlatformData data)
     {
+        if (_data != null)
+        {
+            Debug.Log("Create for " + _data.GetName() + " was called a second time, this is not allowed!");
+            return;
+        }
+
         _data = data;
         SetInfo();
         CreateModel();
-        collider = gameObject.AddComponent<MeshCollider>();
     }
 
     private void SetInfo()
@@ -79,12 +83,12 @@ public class PlatformRenderer : MonoBehaviour
         meshFinal.RecalculateNormals();
         meshFinal.RecalculateBounds();
 
-
+        
         //Add the Renderer and Filter///
-
         gameObject.AddComponent<MeshRenderer>();
-        gameObject.AddComponent<MeshFilter>().sharedMesh = meshFinal;
-
+        gameObject.AddComponent<MeshFilter>();
+        gameObject.GetComponent<MeshFilter>().sharedMesh = meshFinal;
+        gameObject.AddComponent<MeshCollider>();
 
         //Texturing/////////////////////
         //Submeshes get textured in same oreder they were added to the main mesh

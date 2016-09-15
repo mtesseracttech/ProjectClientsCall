@@ -39,7 +39,7 @@ namespace Assets.Scripts.Procedural.Auxiliary
 
         public void Debug()
         {
-            MeshHelper.DebugArray(_vertices);
+            Utility.DebugArray(_vertices);
         }
     }
 }

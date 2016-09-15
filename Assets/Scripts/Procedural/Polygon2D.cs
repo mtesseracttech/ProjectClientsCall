@@ -42,7 +42,7 @@ namespace Assets.Scripts.Procedural
 
         public void Debug()
         {
-            MeshHelper.DebugArray(_vertices);
+            Utility.DebugArray(_vertices);
         }
 
         public override string ToString()
