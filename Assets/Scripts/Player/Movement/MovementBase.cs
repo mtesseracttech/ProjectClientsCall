@@ -1,37 +1,41 @@
 ﻿using System;
-using UnityEngine;
 using System.Collections.Generic;
 using Assets.Scripts.Player.Movement.States;
+using UnityEngine;
 
-public class MovementBase : MonoBehaviour
+namespace Assets.Scripts.Player.Movement
 {
-    private Dictionary<Type, AbstractMovementState> _movementStates;
-    private AbstractMovementState _currentState;
-
-    // Use this for initialization
-	void Start ()
-	{
-	    _movementStates = new Dictionary<Type, AbstractMovementState>();
-
-	    _movementStates[typeof(ClimbingState)] = new ClimbingState(this);
-	    _movementStates[typeof(GlidingState)]  = new GlidingState(this);
-	    _movementStates[typeof(HangingState)]  = new HangingState(this);
-	    _movementStates[typeof(IdlingState)]   = new IdlingState(this);
-	    _movementStates[typeof(JumpingState)]  = new JumpingState(this);
-	    _movementStates[typeof(RunningState)]  = new RunningState(this);
-
-	    SetState(typeof(IdlingState));
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-	    _currentState.Update();
-	}
-
-    public void SetState(Type newState)
+    public class MovementBase : MonoBehaviour
     {
-        Debug.Log("Switching movementstate to: " + newState.FullName);
-        _currentState = _movementStates[newState];
+        private Dictionary<Type, AbstractMovementState> _movementStates;
+        private AbstractMovementState _currentState;
+
+        // Use this for initialization
+        void Start ()
+        {
+            //Setting up the movement States
+            _movementStates = new Dictionary<Type, AbstractMovementState>();
+
+            _movementStates[typeof(ClimbingState)] = new ClimbingState(gameObject);
+            _movementStates[typeof(GlidingState)] = new GlidingState(gameObject);
+            _movementStates[typeof(HangingState)] = new HangingState(gameObject);
+            _movementStates[typeof(IdlingState)] = new IdlingState(gameObject);
+            _movementStates[typeof(JumpingState)] = new JumpingState(gameObject);
+            _movementStates[typeof(RunningState)] = new RunningState(gameObject);
+
+            SetState(typeof(IdlingState));
+        }
+
+        // Update is called once per frame
+        void Update ()
+        {
+            _currentState.Update();
+        }
+
+        public void SetState(Type newState)
+        {
+            Debug.Log("Switching movementstate to: " + newState.FullName);
+            _currentState = _movementStates[newState];
+        }
     }
 }

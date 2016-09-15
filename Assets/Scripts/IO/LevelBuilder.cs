@@ -159,7 +159,9 @@ public class LevelBuilder : MonoBehaviour
         }
         if (_playerSpawn != null)
         {
-            //INSERT SETTING THE PLAYER POSITION TO THIS LOCATION
+            _playerSpawn = new Vector3(_playerSpawn.x, TiledParsingHelper.TiledCompensator(_playerSpawn.y, MapSize.y), _playerSpawn.z);
+            Debug.Log("Player spawn is at: " + _playerSpawn);
+            Player.transform.position = _playerSpawn;
         }
         else Debug.Log("No player spawn was created");
     }
@@ -338,12 +340,6 @@ public class LevelBuilder : MonoBehaviour
 	    {
 	        RebuildLevel();
 	    }
-
-	    foreach (var path in _darknessPaths)
-	    {
-	        Debug.DrawLine(path.Start(), path.End());
-	    }
-        
 	}
 
     //Is called when the tester wants to change the level on the fly and presses "L"
