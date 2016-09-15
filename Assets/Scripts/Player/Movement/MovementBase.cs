@@ -16,21 +16,12 @@ namespace Assets.Scripts.Player.Movement
             //Setting up the movement States
             _movementStates = new Dictionary<Type, AbstractMovementState>();
 
-<<<<<<< HEAD
-	    _movementStates[typeof(ClimbingState)] = new ClimbingState(gameObject);
-	    _movementStates[typeof(GlidingState)]  = new GlidingState(gameObject);
-	    _movementStates[typeof(HangingState)]  = new HangingState(gameObject);
-	    _movementStates[typeof(IdlingState)]   = new IdlingState(gameObject);
-	    _movementStates[typeof(JumpingState)]  = new JumpingState(gameObject);
-	    _movementStates[typeof(RunningState)]  = new RunningState(gameObject);
-=======
             _movementStates[typeof(ClimbingState)] = new ClimbingState(gameObject);
             _movementStates[typeof(GlidingState)] = new GlidingState(gameObject);
             _movementStates[typeof(HangingState)] = new HangingState(gameObject);
             _movementStates[typeof(IdlingState)] = new IdlingState(gameObject);
             _movementStates[typeof(JumpingState)] = new JumpingState(gameObject);
             _movementStates[typeof(RunningState)] = new RunningState(gameObject);
->>>>>>> 86f38e8c3c9512f7ecfd59a03130e0b48e5f8d81
 
             SetState(typeof(IdlingState));
         }
