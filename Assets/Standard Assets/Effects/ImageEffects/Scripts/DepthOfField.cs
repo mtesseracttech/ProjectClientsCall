@@ -1,7 +1,7 @@
+using System;
 using UnityEngine;
-using UnityStandardAssets.ImageEffects;
 
-namespace Standard_Assets.Effects.ImageEffects.Scripts
+namespace UnityStandardAssets.ImageEffects
 {
     [ExecuteInEditMode]
     [RequireComponent (typeof(Camera))]
@@ -11,7 +11,7 @@ namespace Standard_Assets.Effects.ImageEffects.Scripts
         public bool  visualizeFocus = false;
         public float focalLength = 10.0f;
         public float focalSize = 0.05f;
-        public float aperture = 0.5f;
+        public float aperture = 11.5f;
         public Transform focalTransform = null;
         public float maxBlurSize = 2.0f;
         public bool  highResolution = false;
@@ -50,7 +50,6 @@ namespace Standard_Assets.Effects.ImageEffects.Scripts
         private ComputeBuffer cbPoints;
         private float internalBlurWidth = 1.0f;
 
-        private Camera cachedCamera;
 
         public override bool CheckResources () {
             CheckSupport (true); // only requires depth, not HDR
@@ -68,8 +67,7 @@ namespace Standard_Assets.Effects.ImageEffects.Scripts
         }
 
         void OnEnable () {
-            cachedCamera = GetComponent<Camera>();
-            cachedCamera.depthTextureMode |= DepthTextureMode.Depth;
+            GetComponent<Camera>().depthTextureMode |= DepthTextureMode.Depth;
         }
 
         void OnDisable () {
@@ -91,7 +89,7 @@ namespace Standard_Assets.Effects.ImageEffects.Scripts
         void CreateComputeResources () {
             if (cbDrawArgs == null)
             {
-                cbDrawArgs = new ComputeBuffer (1, 16);
+                cbDrawArgs = new ComputeBuffer (1, 16, ComputeBufferType.DrawIndirect);
                 var args= new int[4];
                 args[0] = 0; args[1] = 1; args[2] = 0; args[3] = 0;
                 cbDrawArgs.SetData (args);
@@ -103,7 +101,7 @@ namespace Standard_Assets.Effects.ImageEffects.Scripts
         }
 
         float FocalDistance01 ( float worldDist) {
-            return cachedCamera.WorldToViewportPoint((worldDist-cachedCamera.nearClipPlane) * cachedCamera.transform.forward + cachedCamera.transform.position).z / (cachedCamera.farClipPlane-cachedCamera.nearClipPlane);
+            return GetComponent<Camera>().WorldToViewportPoint((worldDist-GetComponent<Camera>().nearClipPlane) * GetComponent<Camera>().transform.forward + GetComponent<Camera>().transform.position).z / (GetComponent<Camera>().farClipPlane-GetComponent<Camera>().nearClipPlane);
         }
 
         private void WriteCoc ( RenderTexture fromTo, bool fgDilate) {
@@ -159,8 +157,8 @@ namespace Standard_Assets.Effects.ImageEffects.Scripts
 
             // focal & coc calculations
 
-            focalDistance01 = (focalTransform) ? (cachedCamera.WorldToViewportPoint (focalTransform.position)).z / (cachedCamera.farClipPlane) : FocalDistance01 (focalLength);
-            dofHdrMaterial.SetVector("_CurveParams", new Vector4(1.0f, focalSize, (1.0f / (1.0f - aperture) - 1.0f), focalDistance01));
+            focalDistance01 = (focalTransform) ? (GetComponent<Camera>().WorldToViewportPoint (focalTransform.position)).z / (GetComponent<Camera>().farClipPlane) : FocalDistance01 (focalLength);
+            dofHdrMaterial.SetVector ("_CurveParams", new Vector4 (1.0f, focalSize, aperture/10.0f, focalDistance01));
 
             // possible render texture helpers
 

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
     [CustomEditor (typeof(ColorCorrectionCurves))]
-    class ColorCorrectionCurvesEditor : Editor {
+    class ColorCorrectionCurvesEditor : UnityEditor.Editor {
         SerializedObject serObj;
 
         SerializedProperty mode;

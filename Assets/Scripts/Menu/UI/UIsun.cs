@@ -15,7 +15,11 @@ public class UIsun : MonoBehaviour
 
     void Update()
     {
+        if (dayspeed.dayHasCome && SunProgressBar.fillAmount > 1)
+        {
+            SunProgressBar.fillAmount = 0;
+        }
             
-      SunProgressBar.fillAmount += (dayspeed.Speed  * dayspeed.DayRotateSpeed.x/ 198);
+       SunProgressBar.fillAmount += (dayspeed.Speed  * dayspeed.DayRotateSpeed.x/ 198);
     }
 }

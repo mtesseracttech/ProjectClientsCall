@@ -1,7 +1,7 @@
-using System;
 using UnityEngine;
+using UnityStandardAssets.ImageEffects;
 
-namespace UnityStandardAssets.ImageEffects
+namespace Standard_Assets.Effects.ImageEffects.Scripts
 {
     [ExecuteInEditMode]
     [RequireComponent (typeof(Camera))]

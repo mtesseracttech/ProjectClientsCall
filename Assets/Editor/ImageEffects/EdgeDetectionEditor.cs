@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
     [CustomEditor (typeof(EdgeDetection))]
-    class EdgeDetectionEditor : Editor
+    class EdgeDetectionEditor : UnityEditor.Editor
     {
         SerializedObject serObj;
 
@@ -13,7 +13,7 @@ namespace UnityStandardAssets.ImageEffects
         SerializedProperty sensitivityDepth;
         SerializedProperty sensitivityNormals;
 
-        SerializedProperty lumThreshold;
+        SerializedProperty lumThreshhold;
 
         SerializedProperty edgesOnly;
         SerializedProperty edgesOnlyBgColor;
@@ -30,7 +30,7 @@ namespace UnityStandardAssets.ImageEffects
             sensitivityDepth = serObj.FindProperty("sensitivityDepth");
             sensitivityNormals = serObj.FindProperty("sensitivityNormals");
 
-            lumThreshold = serObj.FindProperty("lumThreshold");
+            lumThreshhold = serObj.FindProperty("lumThreshhold");
 
             edgesOnly = serObj.FindProperty("edgesOnly");
             edgesOnlyBgColor = serObj.FindProperty("edgesOnlyBgColor");
@@ -55,7 +55,7 @@ namespace UnityStandardAssets.ImageEffects
             }
             else {
                 // lum based mode
-                EditorGUILayout.PropertyField (lumThreshold, new GUIContent(" Luminance Threshold"));
+                EditorGUILayout.PropertyField (lumThreshhold, new GUIContent(" Luminance Threshold"));
             }
 
             EditorGUILayout.PropertyField (sampleDist, new GUIContent(" Sample Distance"));

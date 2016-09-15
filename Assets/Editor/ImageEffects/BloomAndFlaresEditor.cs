@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UnityStandardAssets.ImageEffects
 {
     [CustomEditor (typeof(BloomAndFlares))]
-    class BloomAndFlaresEditor : Editor
+    class BloomAndFlaresEditor : UnityEditor.Editor
     {
         SerializedProperty tweakMode;
         SerializedProperty screenBlendMode;
