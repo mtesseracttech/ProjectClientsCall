@@ -113,14 +113,6 @@ public class LevelBuilder : MonoBehaviour
 
         List<Vector3> darknessSpawnPoints = new List<Vector3>();
         
-        /*
-        for (int i = 0; i <= spacing * 2; i++)
-        {
-            darknessSpawnPoints.Add(new Vector3((darknessIntervals.x * i) / 2, 0, zDist));
-            darknessSpawnPoints.Add(new Vector3((darknessIntervals.x * i) / 2, MapSize.y, zDist));
-        }
-        */
-        
         for (int i = 0; i <= spacing; i++)
         {
             darknessSpawnPoints.Add(new Vector3(0, darknessIntervals.y * i, zDist));
