@@ -10,6 +10,7 @@ namespace Assets.Scripts.Player.Movement.States
         protected AbstractMovementState(GameObject agent)
         {
             Agent = agent;
+            AgentTransform = agent.transform;
         }
 
         public abstract void Update();
