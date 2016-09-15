@@ -1,10 +1,13 @@
-﻿namespace Assets.Scripts.Player.Movement.States
+﻿using UnityEngine;
+
+namespace Assets.Scripts.Player.Movement.States
 {
     public abstract class AbstractMovementState
     {
-        protected MovementBase Agent;
+        protected GameObject Agent;
+        protected Transform AgentTransform;
 
-        protected AbstractMovementState(MovementBase agent)
+        protected AbstractMovementState(GameObject agent)
         {
             Agent = agent;
         }

@@ -1,14 +1,9 @@
 ﻿using Assets.Scripts.Player.Movement.States;
+using UnityEngine;
 
 public class IdlingState : AbstractMovementState
 {
-    public IdlingState(MovementBase agent) : base(agent)
-    {
+    public IdlingState(GameObject agent) : base(agent){}
 
-    }
-
-    public override void Update()
-    {
-        throw new System.NotImplementedException();
-    }
+    public override void Update(){}
 }

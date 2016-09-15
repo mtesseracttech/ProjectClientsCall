@@ -13,12 +13,12 @@ public class MovementBase : MonoBehaviour
 	{
 	    _movementStates = new Dictionary<Type, AbstractMovementState>();
 
-	    _movementStates[typeof(ClimbingState)] = new ClimbingState(this);
-	    _movementStates[typeof(GlidingState)]  = new GlidingState(this);
-	    _movementStates[typeof(HangingState)]  = new HangingState(this);
-	    _movementStates[typeof(IdlingState)]   = new IdlingState(this);
-	    _movementStates[typeof(JumpingState)]  = new JumpingState(this);
-	    _movementStates[typeof(RunningState)]  = new RunningState(this);
+	    _movementStates[typeof(ClimbingState)] = new ClimbingState(gameObject);
+	    _movementStates[typeof(GlidingState)]  = new GlidingState(gameObject);
+	    _movementStates[typeof(HangingState)]  = new HangingState(gameObject);
+	    _movementStates[typeof(IdlingState)]   = new IdlingState(gameObject);
+	    _movementStates[typeof(JumpingState)]  = new JumpingState(gameObject);
+	    _movementStates[typeof(RunningState)]  = new RunningState(gameObject);
 
 	    SetState(typeof(IdlingState));
 	}

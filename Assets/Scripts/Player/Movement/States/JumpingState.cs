@@ -1,15 +1,14 @@
-﻿namespace Assets.Scripts.Player.Movement.States
+﻿using UnityEngine;
+
+namespace Assets.Scripts.Player.Movement.States
 {
     public class JumpingState : AbstractMovementState
     {
-        public JumpingState(MovementBase agent) : base(agent)
-        {
-
-        }
+        public JumpingState(GameObject agent) : base(agent){}
 
         public override void Update()
         {
-            throw new System.NotImplementedException();
+
         }
     }
 }

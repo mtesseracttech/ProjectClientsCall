@@ -1,15 +1,14 @@
-﻿namespace Assets.Scripts.Player.Movement.States
+﻿using UnityEngine;
+
+namespace Assets.Scripts.Player.Movement.States
 {
     public class ClimbingState : AbstractMovementState
     {
-        public ClimbingState(MovementBase agent) : base(agent)
-        {
-
-        }
+        public ClimbingState(GameObject agent) : base(agent){}
 
         public override void Update()
         {
-            throw new System.NotImplementedException();
+
         }
     }
 }
