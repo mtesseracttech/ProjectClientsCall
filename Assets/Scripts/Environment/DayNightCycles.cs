@@ -37,6 +37,7 @@ namespace Environment
 
         void Start()
         {
+
             _mainLight = GetComponent<Light>();
             _sky = RenderSettings.skybox;
             NightHasCome = false;

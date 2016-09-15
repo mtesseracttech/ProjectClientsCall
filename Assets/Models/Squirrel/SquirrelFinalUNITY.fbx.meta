@@ -101,7 +101,7 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleRotations: 1
-    optimizeGameObjects: 0
+    optimizeGameObjects: 1
     motionNodeName: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -430,7 +430,7 @@ ModelImporter:
       name: Jump
       takeName: Take 001
       firstFrame: 132
-      lastFrame: 166
+      lastFrame: 150
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -440,8 +440,8 @@ ModelImporter:
       loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 1
@@ -452,6 +452,12 @@ ModelImporter:
       events: []
       transformMask:
       - path: 
+        weight: 1
+      - path: pCube5
+        weight: 1
+      - path: pCube6
+        weight: 1
+      - path: polySurface20
         weight: 1
       - path: nurbsCircle1
         weight: 1
@@ -520,12 +526,6 @@ ModelImporter:
       - path: nurbsCircle1/transform20/joint1/joint2/joint3/joint4/joint5/joint6/joint7
         weight: 1
       - path: nurbsCircle1/transform20/joint1/joint30
-        weight: 1
-      - path: pCube5
-        weight: 1
-      - path: pCube6
-        weight: 1
-      - path: polySurface20
         weight: 1
       maskType: 0
       maskSource: {instanceID: 0}

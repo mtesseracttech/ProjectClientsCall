@@ -1,12 +1,14 @@
-using System;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using UnityEngine;
+using Standard_Assets.Effects.ImageEffects.Scripts;
+using UnityStandardAssets.ImageEffects;
 
-namespace UnityStandardAssets.ImageEffects
+namespace Editor.ImageEffects
 {
     [CustomEditor(typeof(CreaseShading))]
-    class CreaseShadingEditor : Editor {
+    class CreaseShadingEditor : UnityEditor.Editor
+    {
         SerializedObject serObj;
 
         SerializedProperty m_intensity;

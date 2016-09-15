@@ -161,7 +161,9 @@ public class LevelBuilder : MonoBehaviour
             if (tree != null)
             {
                 tree.SendMessage("Create", treeData);
+                tree.transform.parent = transform;
                 _proceduralTrees.Add(tree);
+                
             }
         }
     }
