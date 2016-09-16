@@ -16,7 +16,7 @@ public class Inventory : MonoBehaviour
         NutsText.text =  NutCount.ToString() + " / " + Feeding.maxAmount;
     }
 
-    private bool AccornInInventory()
+    public bool HasAcorn()
     {
         if (NutCount > 0) return true;
         return false;
