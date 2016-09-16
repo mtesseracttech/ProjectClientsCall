@@ -5,9 +5,8 @@ public class Inventory : MonoBehaviour
 {
     public Text NutsText;
     public int NutCount;
-    public bool GotAcorn;
     public FeedingBehavior Feeding;
-   public int Nuts
+    public int Nuts
     {
         get { return NutCount; }
     }
@@ -15,19 +14,12 @@ public class Inventory : MonoBehaviour
     private void Update()
     {
         NutsText.text =  NutCount.ToString() + " / " + Feeding.maxAmount;
-        AccornInInventory();
     }
 
-    private void AccornInInventory()
+    private bool AccornInInventory()
     {
-        if (NutCount > 0)
-        {
-            GotAcorn = true;
-        }
-        else
-        {
-            GotAcorn = false;
-        }
+        if (NutCount > 0) return true;
+        return false;
     }
 
 }
