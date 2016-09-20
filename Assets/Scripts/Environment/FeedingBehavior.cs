@@ -79,7 +79,7 @@ public class FeedingBehavior : MonoBehaviour
 
     private void CheckingTheDay()
     {
-        if (HaveAcorn.GotAcorn)
+        if (HaveAcorn.HasAcorn())
         {
             if (HaveAcorn.NutCount == FirstDayAcorn && !_1stDayPassed)
             {

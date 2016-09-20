@@ -228,13 +228,11 @@ public class LevelBuilder : MonoBehaviour
             GameObject tree = Instantiate(ProceduralTreeRenderer, location, Quaternion.identity) as GameObject;
             if (tree != null)
             {
-
                 tree.transform.parent = transform;
 
                 tree.SendMessage("Create", treeData); //This is the part that triggers the procedural instantiation
 
                 _proceduralTrees.Add(tree);
-                
             }
         }
     }
