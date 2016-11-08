@@ -1,8 +1,7 @@
 ﻿using System;
-using Assets.script;
 using UnityEngine;
 
-namespace Assets.Scripts.Player
+namespace Assets
 {
     [RequireComponent(typeof(Controller2D))]
     public class Player : MonoBehaviour
@@ -12,7 +11,7 @@ namespace Assets.Scripts.Player
         public float MoveSpeed = 6;
         public float Gravity;
 
-        public float accelerationTimeAirborne =0.2f;
+        public float accelerationTimeAirborne = 0.2f;
         public float accelerationGrounded = 0.1f;
 
         public float MaxJumpVelocity;
@@ -26,14 +25,17 @@ namespace Assets.Scripts.Player
         private float velocityXSmoothing;
         private Vector3 _velocity;
         private Controller2D _controller;
+        Vector2 directionalInput;
+        int wallDirX;
+        public GameObject child;
 
         void Start()
         {
             _controller = GetComponent<Controller2D>();
 
-            Gravity = -(MaxJumpHeight)/Mathf.Pow(TimeToJumpApex, 2);
-            MaxJumpVelocity = Mathf.Abs(Gravity)*TimeToJumpApex;
-            MinJumpVelocity = Mathf.Sqrt(2*Math.Abs(Gravity)*minnJumpHeight);
+            Gravity = -(MaxJumpHeight) / Mathf.Pow(TimeToJumpApex, 2);
+            MaxJumpVelocity = Mathf.Abs(Gravity) * TimeToJumpApex;
+            MinJumpVelocity = Mathf.Sqrt(2 * Math.Abs(Gravity) * minnJumpHeight);
 
         }
 
@@ -45,30 +47,31 @@ namespace Assets.Scripts.Player
             }
 
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            SetDirectionalInput(input);
             //flipping player on the ground
             float moveDirX = Input.GetAxisRaw("Horizontal");
-         //   Vector2 inputDir = input.normalized;
+            //   Vector2 inputDir = input.normalized;
             if (moveDirX != 0 && !_controller.Collisions.climbingSlope)
             {
-                transform.eulerAngles = (moveDirX > 0) ? Vector3.zero : Vector3.up*180;
+               child.transform.eulerAngles = (moveDirX > 0) ? Vector3.up * 90 : Vector3.up * -90;
             }
-                
+
             //animation of running if bellow is true
             if (input.x != 0 && _controller.Collisions.below && !Input.GetKeyDown(KeyCode.Space))
             {
                 //animations of running
-                AnimationStates(false,true,false,false,false);
+                AnimationStates(false, true, false, false, false);
             }
             else if (!Input.GetKeyDown(KeyCode.Space) && input.x == 0 && _controller.Collisions.below)
             {
                 //animations if not moving on ground. idle
-                AnimationStates(true,false,false,false,false);
+                AnimationStates(true, false, false, false, false);
             }
-           
+
             if (Input.GetKeyDown(KeyCode.Space) && _controller.Collisions.below)
             {
                 //add animation of jump
-                AnimationStates(false,false,true,false,false);
+                AnimationStates(false, false, true, false, false);
                 _velocity.y = MaxJumpVelocity;
             }
 
@@ -83,41 +86,46 @@ namespace Assets.Scripts.Player
             if (_velocity.x != 0 && _velocity.y != 0 && !_controller.Collisions.below)
             {
                 transform.Translate(Vector3.down * _velocity.x * Time.deltaTime);
-             //   _velocity.y = Mathf.Clamp(_velocity.y, maxVerticleSpeed, -maxVerticleSpeed);
+                //   _velocity.y = Mathf.Clamp(_velocity.y, maxVerticleSpeed, -maxVerticleSpeed);
                 print("glide");
                 Glidding();
-              
+
             }
 
             float targerVelocityX = input.x * MoveSpeed;
-            _velocity.x = Mathf.SmoothDamp(_velocity.x, targerVelocityX, ref velocityXSmoothing, (_controller.Collisions.below)?accelerationGrounded:accelerationTimeAirborne);
+            _velocity.x = Mathf.SmoothDamp(_velocity.x, targerVelocityX, ref velocityXSmoothing, (_controller.Collisions.below) ? accelerationGrounded : accelerationTimeAirborne);
             _velocity.y += Gravity * Time.deltaTime;
-            _controller.Move(_velocity * Time.deltaTime);
+            _controller.Move(_velocity * Time.deltaTime, directionalInput);
         }
 
-        void AnimationStates(bool idleState, bool runningState,bool jumpingState, bool glidingState, bool idle_climState)
+        void AnimationStates(bool idleState, bool runningState, bool jumpingState, bool glidingState, bool idle_climState)
         {
-            animator.SetBool("Idle",idleState);
-            animator.SetBool("Jumping",jumpingState);
-            animator.SetBool("Running",runningState);
-            animator.SetBool("Glidin",glidingState);
-            animator.SetBool("Idle_Climb",idle_climState);
+            animator.SetBool("Idle", idleState);
+            animator.SetBool("Jumping", jumpingState);
+            animator.SetBool("Running", runningState);
+            animator.SetBool("Glidin", glidingState);
+            animator.SetBool("Idle_Climb", idle_climState);
 
             if (idleState)
                 print("Idle state");
-            else if(runningState)
+            else if (runningState)
                 print("running state");
-            else if(jumpingState)
+            else if (jumpingState)
                 print("jumping state");
-            else if(glidingState)
+            else if (glidingState)
                 print("gliding State");
-            else if(idle_climState)
+            else if (idle_climState)
                 print("idle climb State");
         }
 
         void Glidding()
         {
-           AnimationStates(false, false, false, true, false);
+            AnimationStates(false, false, false, true, false);
+        }
+
+        public void SetDirectionalInput(Vector2 input)
+        {
+            directionalInput = input;
         }
     }
 }
