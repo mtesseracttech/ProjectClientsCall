@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.script
+namespace Assets.Scripts.Player
 {
     [RequireComponent(typeof(BoxCollider2D))]
     public class Controller2D : MonoBehaviour
@@ -51,8 +51,10 @@ namespace Assets.script
             {
                 VerticalCollisions(ref velocity);
             }
-
+           
             transform.Translate(velocity,Space.World);
+            //You would then set it's rotation on the z axis to collisions.slopeAngle at the end of the Move() method.﻿
+           // transform.Rotate(0, 0, Collisions.slopeAngle);
         }
 
         void HorizontalCollisions(ref Vector3 velocity)
@@ -65,7 +67,7 @@ namespace Assets.script
                 Vector2 rayOrigin = (directionX == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.bottomRight;
                 rayOrigin += Vector2.up * (_horizontalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, CollisionMask);
-
+                
                 Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength, Color.red);
 
                 if (hit)
@@ -158,13 +160,13 @@ namespace Assets.script
 
             for (int i = 0; i < VerticalRayCount; i++)
             {
-                Vector2 rayOrigin = (directionY == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.topLeft;
-                rayOrigin += Vector2.right * (_verticalRaySpacing * i + velocity.x);
-                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, CollisionMask);
-
+                Vector3 rayOrigin = (directionY == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.topLeft;
+                rayOrigin += Vector3.right * (_verticalRaySpacing * i + velocity.x);
+                // RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, CollisionMask);
+                RaycastHit hit;
                 Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.red);
 
-                if (hit)
+                if ( Physics.Raycast(rayOrigin, Vector3.up * directionY * rayLength, out hit, rayLength, CollisionMask))
                 {
                     velocity.y = (hit.distance - SkinWidth) * directionY;
                     rayLength = hit.distance;
