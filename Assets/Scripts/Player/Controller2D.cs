@@ -233,28 +233,27 @@ namespace Assets.script
             public Vector2 bottomLeft, bottomRight;
         }
 
-    }
-
-
-    public struct CollisionInfo
-    {
-        public bool above, below;
-        public bool left, right;
-
-        public bool climbingSlope;
-        public bool descendingSlope;
-        public float slopeAngle, slopeAngleOld;
-        public Vector3 velocityOld;
-        
-
-        public void Reset()
+        public struct CollisionInfo
         {
-            above = below = false;
-            left = right = false;
-            climbingSlope = false;
-            descendingSlope = false;
-            slopeAngleOld = slopeAngle;
-            slopeAngle = 0;
+            public bool above, below;
+            public bool left, right;
+
+            public bool climbingSlope;
+            public bool descendingSlope;
+            public float slopeAngle, slopeAngleOld;
+            public Vector3 velocityOld;
+
+
+            public void Reset()
+            {
+                above = below = false;
+                left = right = false;
+                climbingSlope = false;
+                descendingSlope = false;
+                slopeAngleOld = slopeAngle;
+                slopeAngle = 0;
+            }
         }
-    }
+
+    }   
 }
