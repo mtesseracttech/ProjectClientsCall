@@ -45,16 +45,15 @@ namespace Assets.script
             //flipping player on the ground
             float moveDirX = Input.GetAxisRaw("Horizontal");
             if (moveDirX != 0 && !_controller.Collisions.climbingSlope)
-                transform.eulerAngles = (moveDirX > 0) ? Vector3.zero: Vector3.up * 180;
+            {
+                transform.eulerAngles = (moveDirX > 0) ? Vector3.zero : Vector3.up*180;
+            }
                 
-
-
             //animation of running if bellow is true
             if (input.x != 0 && _controller.Collisions.below && !Input.GetKeyDown(KeyCode.Space))
             {
                 //animations of running
                 AnimationStates(false,true,false,false,false);
- 
             }
             else if (!Input.GetKeyDown(KeyCode.Space) && input.x == 0 && _controller.Collisions.below)
             {
@@ -62,7 +61,7 @@ namespace Assets.script
                 AnimationStates(true,false,false,false,false);
             }
            
-            if (Input.GetKeyDown(KeyCode.Space) && _controller.Collisions.below )
+            if (Input.GetKeyDown(KeyCode.Space) && _controller.Collisions.below)
             {
                 //add animation of jump
                 AnimationStates(false,false,true,false,false);
@@ -75,6 +74,14 @@ namespace Assets.script
                 {
                     _velocity.y = MinJumpVelocity;
                 }
+            }
+            //gliding animation
+            if (_velocity.x != 0 && _velocity.y != 0 && !_controller.Collisions.below)
+            {
+                
+                print("glide");
+                Glidding();
+              
             }
 
             float targerVelocityX = input.x * MoveSpeed;
@@ -101,6 +108,11 @@ namespace Assets.script
                 print("gliding State");
             else if(idle_climState)
                 print("idle climb State");
+        }
+
+        void Glidding()
+        {
+           AnimationStates(false, false, false, true, false);
         }
     }
 }
