@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets.script
+namespace Assets.Scripts.Player
 {
     [RequireComponent(typeof(Controller2D))]
     public class Player : MonoBehaviour
@@ -78,7 +78,8 @@ namespace Assets.script
             //gliding animation
             if (_velocity.x != 0 && _velocity.y != 0 && !_controller.Collisions.below)
             {
-                
+                transform.Translate(Vector3.down * _velocity.x * Time.deltaTime);
+             //   _velocity.y = Mathf.Clamp(_velocity.y, maxVerticleSpeed, -maxVerticleSpeed);
                 print("glide");
                 Glidding();
               
