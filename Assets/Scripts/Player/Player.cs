@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.script;
 using UnityEngine;
 
 namespace Assets.Scripts.Player
@@ -6,6 +7,8 @@ namespace Assets.Scripts.Player
     [RequireComponent(typeof(Controller2D))]
     public class Player : MonoBehaviour
     {
+        public float turnSmoothTime = 0.2f;
+        private float turnSmoothVelocity;
         public float MoveSpeed = 6;
         public float Gravity;
 
@@ -44,6 +47,7 @@ namespace Assets.Scripts.Player
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
             //flipping player on the ground
             float moveDirX = Input.GetAxisRaw("Horizontal");
+         //   Vector2 inputDir = input.normalized;
             if (moveDirX != 0 && !_controller.Collisions.climbingSlope)
             {
                 transform.eulerAngles = (moveDirX > 0) ? Vector3.zero : Vector3.up*180;
