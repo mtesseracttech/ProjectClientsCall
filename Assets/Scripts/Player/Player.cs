@@ -78,7 +78,7 @@ namespace Assets.script
             //gliding animation
             if (_velocity.x != 0 && _velocity.y != 0 && !_controller.Collisions.below)
             {
-                
+                transform.Translate(Vector3.down * _velocity.x * Time.deltaTime);
                 print("glide");
                 Glidding();
               
