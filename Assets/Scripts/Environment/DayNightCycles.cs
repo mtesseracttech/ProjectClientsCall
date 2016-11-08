@@ -7,7 +7,7 @@ namespace Environment
     {
         public bool NightHasCome;
         public float Speed;
-        public FeedingBehavior behavior;
+      //  public FeedingBehavior behavior;
         public bool GameOver;
 
 
@@ -101,21 +101,21 @@ namespace Environment
             }
             if (DaysHasPassed >= 0)
             {
-                behavior.InTheCave = false;
+               // behavior.InTheCave = false;
             }
             
         }
 
         private void UpdatingSpeed()
         {
-            if (behavior.InTheCave)
-            {
-                DayRotateSpeed.x = NightRotateSpeed.x;
-            }
-            else
-            {
+          //  if (behavior.InTheCave)
+          //  {
+         //       DayRotateSpeed.x = NightRotateSpeed.x;
+        //    }
+         //   else
+         //   {
                 DayRotateSpeed.x = daySpeed;
-            }
+           // }
         }
     }
 }
