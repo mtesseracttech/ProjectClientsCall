@@ -89,6 +89,8 @@ public class PlatformRenderer : MonoBehaviour
         gameObject.AddComponent<MeshFilter>();
         gameObject.GetComponent<MeshFilter>().sharedMesh = meshFinal;
         gameObject.AddComponent<MeshCollider>();
+        gameObject.GetComponent<MeshCollider>().convex = true;
+
 
         //Texturing/////////////////////
         //Submeshes get textured in same oreder they were added to the main mesh
