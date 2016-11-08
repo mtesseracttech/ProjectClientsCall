@@ -1,12 +1,11 @@
-using Standard_Assets.Effects.ImageEffects.Scripts;
+using System;
 using UnityEditor;
 using UnityEngine;
-using UnityStandardAssets.ImageEffects;
 
-namespace Editor.ImageEffects
+namespace UnityStandardAssets.ImageEffects
 {
     [CustomEditor (typeof(ColorCorrectionLookup))]
-    class ColorCorrectionLookupEditor : UnityEditor.Editor
+    class ColorCorrectionLookupEditor : Editor
     {
         SerializedObject serObj;
 
