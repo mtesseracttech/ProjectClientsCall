@@ -55,7 +55,7 @@ namespace Assets
             //movement direction
             if (moveDirX != 0 && _controller.Collisions.slopeAngle == 0)
             {
-               child.transform.eulerAngles = (moveDirX > 0) ? Vector3.up * 90 : Vector3.up * -90;
+               child.transform.eulerAngles = (moveDirX > 0) ? Vector3.up * 90 : Vector3.up * -90 ;
             }
 
             //if going up the slope

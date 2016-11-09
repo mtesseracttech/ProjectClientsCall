@@ -64,13 +64,14 @@ namespace Assets
             {
                 VerticalCollisions(ref moveAmount);
             }
-
-            transform.Translate(moveAmount);
-
             if (standingOnPlatform)
             {
                 Collisions.below = true;
             }
+
+              transform.Translate(moveAmount);
+
+
         }
 
         void HorizontalCollisions(ref Vector3 velocity)
