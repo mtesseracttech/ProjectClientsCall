@@ -50,10 +50,39 @@ namespace Assets
             SetDirectionalInput(input);
             //flipping player on the ground
             float moveDirX = Input.GetAxisRaw("Horizontal");
-            //   Vector2 inputDir = input.normalized;
-            if (moveDirX != 0 && !_controller.Collisions.climbingSlope)
+            // Vector2 inputDir = input.normalized;
+
+            //movement direction
+            if (moveDirX != 0 && _controller.Collisions.slopeAngle == 0)
             {
                child.transform.eulerAngles = (moveDirX > 0) ? Vector3.up * 90 : Vector3.up * -90;
+            }
+
+            //if going up the slope
+            if (moveDirX != 0 && _controller.Collisions.climbingSlope)
+            {
+              //  float angle = Mathf.LerpAngle(0, -_controller.Collisions.slopeAngle, Time.deltaTime*2);
+                if (moveDirX < 0)
+                 child.transform.eulerAngles = new Vector3(-_controller.Collisions.slopeAngle, -90,0);
+                else
+                    child.transform.eulerAngles = new Vector3(-_controller.Collisions.slopeAngle, 90, 0);
+            }
+
+            //if not moving on the slope
+            if (moveDirX == 0 && (_controller.Collisions.slopeAngle > 0 || _controller.Collisions.slopeAngle < 0))
+            {
+                //animation of climbing
+                AnimationStates(false,false,false,false,true);
+            }
+
+            //if going down the slope
+            if (moveDirX != 0 && !_controller.Collisions.climbingSlope && _controller.Collisions.descendingSlope)
+            {
+              
+                if (moveDirX < 0)
+                child.transform.eulerAngles = new Vector3(_controller.Collisions.slopeAngle, -90, 0);
+                else
+                    child.transform.eulerAngles = new Vector3(_controller.Collisions.slopeAngle, 90, 0);
             }
 
             //animation of running if bellow is true
@@ -62,7 +91,7 @@ namespace Assets
                 //animations of running
                 AnimationStates(false, true, false, false, false);
             }
-            else if (!Input.GetKeyDown(KeyCode.Space) && input.x == 0 && _controller.Collisions.below)
+            else if (!Input.GetKeyDown(KeyCode.Space) && input.x == 0 && _controller.Collisions.below && _controller.Collisions.slopeAngle == 0)
             {
                 //animations if not moving on ground. idle
                 AnimationStates(true, false, false, false, false);
