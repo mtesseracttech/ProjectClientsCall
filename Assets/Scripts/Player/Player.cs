@@ -17,7 +17,6 @@ namespace Assets
         public float MaxJumpVelocity;
         public float MinJumpVelocity;
         public float MaxJumpHeight = 4;
-        public float minnJumpHeight = 1;
         public float TimeToJumpApex = 0.4f;        //time takes to reach the highest jump
 
         public Animator animator;
@@ -35,7 +34,6 @@ namespace Assets
 
             Gravity = -(MaxJumpHeight) / Mathf.Pow(TimeToJumpApex, 2);
             MaxJumpVelocity = Mathf.Abs(Gravity) * TimeToJumpApex;
-            MinJumpVelocity = Mathf.Sqrt(2 * Math.Abs(Gravity) * minnJumpHeight);
 
         }
 
@@ -116,8 +114,8 @@ namespace Assets
             {
                 transform.Translate(Vector3.down * _velocity.x * Time.deltaTime);
                 //   _velocity.y = Mathf.Clamp(_velocity.y, maxVerticleSpeed, -maxVerticleSpeed);
-                print("glide");
-                Glidding();
+
+                AnimationStates(false, false, false, true, false);
 
             }
 
@@ -135,6 +133,7 @@ namespace Assets
             animator.SetBool("Glidin", glidingState);
             animator.SetBool("Idle_Climb", idle_climState);
 
+            /**
             if (idleState)
                 print("Idle state");
             else if (runningState)
@@ -145,11 +144,7 @@ namespace Assets
                 print("gliding State");
             else if (idle_climState)
                 print("idle climb State");
-        }
-
-        void Glidding()
-        {
-            AnimationStates(false, false, false, true, false);
+            /**/
         }
 
         public void SetDirectionalInput(Vector2 input)

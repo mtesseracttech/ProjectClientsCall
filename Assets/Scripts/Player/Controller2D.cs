@@ -20,7 +20,7 @@ namespace Assets
         public Vector2 playerInput;
 
         private const float dstBetweenRays = .1f;
-        private const float SkinWidth = .015f;
+        private const float SkinWidth = .09f;
         private float _horizontalRaySpacing;
         private float _verticalRaySpacing;
 
@@ -78,12 +78,13 @@ namespace Assets
         {
             float directionX = Mathf.Sign(velocity.x);
             float rayLength = Mathf.Abs(velocity.x) + SkinWidth;
-
+            print(rayLength);
+            
             if (Mathf.Abs(velocity.x) < SkinWidth)
             {
                 rayLength = 2 * SkinWidth;
             }
-
+            
             for (int i = 0; i < HorizontalRayCount; i++)
             {
                 /**
@@ -91,14 +92,16 @@ namespace Assets
                 rayOrigin += Vector2.up * (_horizontalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, CollisionMask);
                 /**/
+
                 Vector3 rayOrigin = (directionX == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.bottomRight;
                 rayOrigin += Vector3.up * (_horizontalRaySpacing * i);
                 RaycastHit hit;
 
                 /**/
                 Debug.DrawRay(rayOrigin, Vector3.right * directionX , Color.blue);
+                
 
-                if (Physics.Raycast(rayOrigin, Vector3.right * directionX,out hit, rayLength, CollisionMask))
+                if (Physics.Raycast(rayOrigin, Vector3.right * directionX * 10,out hit, rayLength, CollisionMask))
                 {
                     if (hit.distance == 0)
                     {
@@ -128,7 +131,7 @@ namespace Assets
                     if (!Collisions.climbingSlope || slopeAngle > maxClimbAngle)
                     {
                         velocity.x = (hit.distance - SkinWidth) * directionX;
-                        rayLength = hit.distance;
+                        rayLength = hit.distance ;
 
                         if (Collisions.climbingSlope)
                         {
@@ -208,6 +211,7 @@ namespace Assets
             float directionY = Mathf.Sign(velocity.y);
             float rayLength = Mathf.Abs(velocity.y) + SkinWidth;
 
+
             for (int i = 0; i < VerticalRayCount; i++)
             {
                 /**
@@ -222,7 +226,7 @@ namespace Assets
 
                 Debug.DrawRay(rayOrigin, Vector3.up * directionY, Color.red);
 
-                if (Physics.Raycast(rayOrigin, Vector3.up * directionY, out hit,rayLength, CollisionMask))
+                if (Physics.Raycast(rayOrigin, Vector3.up * directionY * 10, out hit,rayLength, CollisionMask))
                 {
                     velocity.y = (hit.distance - SkinWidth) * directionY;
                     rayLength = hit.distance;
@@ -247,7 +251,9 @@ namespace Assets
                 Vector3 rayOrigin = ((directionX == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.bottomRight) + Vector3.up * velocity.y;
                 RaycastHit hit ;
 
-                if (Physics.Raycast(rayOrigin, Vector3.right * directionX,out hit, rayLength, CollisionMask))
+                Debug.DrawRay(rayOrigin, Vector3.up * directionX , Color.yellow);
+
+                if (Physics.Raycast(rayOrigin, Vector3.right * directionX * 10,out hit, rayLength, CollisionMask))
                 {
                     float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 
