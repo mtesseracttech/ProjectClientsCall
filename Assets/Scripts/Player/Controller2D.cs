@@ -1,106 +1,141 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts.Player
+namespace Assets
 {
     [RequireComponent(typeof(BoxCollider))]
     public class Controller2D : MonoBehaviour
     {
-
         public LayerMask CollisionMask;
         public CollisionInfo Collisions;
         public int HorizontalRayCount = 5;
         public int VerticalRayCount = 5;
-        public bool onSlope;
-        public bool SlopeOnLeft;
-        public bool SlopeOnRight;
+        //   public bool onSlope;
+        //   public bool SlopeOnLeft;
+        //   public bool SlopeOnRight;
 
         public float maxClimbAngle = 90;
-        public float maxDescebdAbgle = 90;
-       
-        private const float dstBetweenRays = .25f;
-        private const float SkinWidth = .015f;
+        public float maxDescebdAbgle = 100;
+
+        [HideInInspector]
+        public Vector2 playerInput;
+
+        private const float dstBetweenRays = .1f;
+        private const float SkinWidth = .09f;
         private float _horizontalRaySpacing;
         private float _verticalRaySpacing;
 
         private BoxCollider _collider;
         private RaycastOrigins _raycastOrigins;
-        
+
+ 
+
         void Start()
         {
             _collider = GetComponent<BoxCollider>();
             CalculateRaySpacing();
-            onSlope = false;
+            Collisions.faceDir = 1;
+            // onSlope = false;
         }
 
-        public void Move(Vector3 velocity)
+        public void Move(Vector3 moveAmount, bool standingOnPlatform)
+        {
+            Move(moveAmount, Vector2.zero, standingOnPlatform);
+        }
+
+        public void Move(Vector3 moveAmount, Vector2 input, bool standingOnPlatform = false)
         {
             UpdateRaycastOrigins();
             Collisions.Reset();
-            Collisions.velocityOld = velocity;
-            
-            if (velocity.y < 0)
+            Collisions.moveAmountOld = moveAmount;
+            playerInput = input;
+
+            if (moveAmount.y < 0)
             {
-                DescendSlope(ref velocity);
+                DescendSlope(ref moveAmount);
             }
-            if (velocity.x != 0)
+
+            if (moveAmount.x != 0)
             {
-                onSlope = false;
-                HorizontalCollisions(ref velocity);
+                Collisions.faceDir = (int)Mathf.Sign(moveAmount.x);
             }
-            if (velocity.y != 0)
+
+            HorizontalCollisions(ref moveAmount);
+            if (moveAmount.y != 0)
             {
-                VerticalCollisions(ref velocity);
+                VerticalCollisions(ref moveAmount);
             }
-           
-            transform.Translate(velocity,Space.World);
-            //You would then set it's rotation on the z axis to collisions.slopeAngle at the end of the Move() method.﻿
-           // transform.Rotate(0, 0, Collisions.slopeAngle);
+            if (standingOnPlatform)
+            {
+                Collisions.below = true;
+            }
+
+              transform.Translate(moveAmount);
+
+
         }
 
         void HorizontalCollisions(ref Vector3 velocity)
         {
             float directionX = Mathf.Sign(velocity.x);
             float rayLength = Mathf.Abs(velocity.x) + SkinWidth;
-
+            print(rayLength);
+            
+            if (Mathf.Abs(velocity.x) < SkinWidth)
+            {
+                rayLength = 2 * SkinWidth;
+            }
+            
             for (int i = 0; i < HorizontalRayCount; i++)
             {
+                /**
+                Vector2 rayOrigin = (directionX == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.bottomRight;
+                rayOrigin += Vector2.up * (_horizontalRaySpacing * i);
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, CollisionMask);
+                /**/
+
                 Vector3 rayOrigin = (directionX == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.bottomRight;
                 rayOrigin += Vector3.up * (_horizontalRaySpacing * i);
                 RaycastHit hit;
 
+                /**/
+                Debug.DrawRay(rayOrigin, Vector3.right * directionX , Color.blue);
                 
-                Debug.DrawRay(rayOrigin, Vector3.right * directionX ,Color.blue);
 
-                if (Physics.Raycast(rayOrigin, Vector3.right * directionX,out hit, rayLength, CollisionMask))
+                if (Physics.Raycast(rayOrigin, Vector3.right * directionX * 10,out hit, rayLength, CollisionMask))
                 {
+                    if (hit.distance == 0)
+                    {
+                        continue;
+                    }
+
                     float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
                     if (i == 0 && slopeAngle <= maxClimbAngle)
                     {
                         if (Collisions.descendingSlope)
                         {
                             Collisions.descendingSlope = false;
-                            velocity = Collisions.velocityOld;
+                            velocity = Collisions.moveAmountOld;
                         }
 
                         float distanceToSlopeStart = 0;
                         if (slopeAngle != Collisions.slopeAngleOld)
                         {
                             distanceToSlopeStart = hit.distance - SkinWidth;
-                            velocity.x -= distanceToSlopeStart*directionX;
+                            velocity.x -= distanceToSlopeStart * directionX;
                         }
 
-                        ClimbSlope(ref velocity, slopeAngle);
-                        velocity.x += distanceToSlopeStart*directionX;
+                        ClimbSlope(ref velocity, slopeAngle, hit.normal);
+                        velocity.x += distanceToSlopeStart * directionX;
                     }
 
                     if (!Collisions.climbingSlope || slopeAngle > maxClimbAngle)
                     {
                         velocity.x = (hit.distance - SkinWidth) * directionX;
-                        rayLength = hit.distance;
+                        rayLength = hit.distance ;
 
                         if (Collisions.climbingSlope)
                         {
-                            velocity.y = Mathf.Tan(Collisions.slopeAngle*Mathf.Deg2Rad)*Mathf.Abs(velocity.x);
+                            velocity.y = Mathf.Tan(Collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(velocity.x);
                         }
 
                         Collisions.left = directionX == -1;
@@ -110,48 +145,65 @@ namespace Assets.Scripts.Player
             }
         }
 
-        void ClimbSlope(ref Vector3 pVelocity, float pSloapAngle)
+        void ClimbSlope(ref Vector3 moveAmount, float pSloapAngle, Vector3 slopeNormal)
         {
-            float moveDistance = Mathf.Abs(pVelocity.x);
+            float moveDistance = Mathf.Abs(moveAmount.x);
             float climbVelocityY = Mathf.Sin(pSloapAngle * Mathf.Deg2Rad) * moveDistance;
 
-            if (pVelocity.y <= climbVelocityY)
+            if (moveAmount.y <= climbVelocityY)
             {
-                pVelocity.y = climbVelocityY;
-                pVelocity.x = Mathf.Cos(pSloapAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(pVelocity.x);
+                moveAmount.y = climbVelocityY;
+                moveAmount.x = Mathf.Cos(pSloapAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(moveAmount.x);
                 Collisions.below = true; //to make jump 
                 Collisions.climbingSlope = true;
                 Collisions.slopeAngle = pSloapAngle;
+                Collisions.slopeNormal = slopeNormal;
             }
         }
 
-        void DescendSlope(ref Vector3 pVelocity)
+        void DescendSlope(ref Vector3 moveAmount)
         {
-            
-            float directionX = Mathf.Sign(pVelocity.x);
-            Vector2 rayOrigin = (directionX == -1) ? _raycastOrigins.bottomRight : _raycastOrigins.bottomLeft;
-            RaycastHit hit;
-            if (Physics.Raycast(rayOrigin, -Vector2.up,out hit, Mathf.Infinity, CollisionMask))
-            {
-                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-                if (slopeAngle != 0 && slopeAngle <= maxDescebdAbgle)
-                {
-                   if( Mathf.Sign(hit.normal.x) == directionX)
-                    {
-                        if (hit.distance - SkinWidth <= Mathf.Tan(slopeAngle*Mathf.Deg2Rad)*Mathf.Abs(pVelocity.x))
-                        {
-                            float moveDistance = Mathf.Abs(pVelocity.x);
-                            float descendVelocityY = Mathf.Sin(slopeAngle*Mathf.Deg2Rad)*moveDistance;
-                            pVelocity.x = Mathf.Cos(slopeAngle*Mathf.Deg2Rad)*moveDistance*Mathf.Sign(pVelocity.x);
-                            pVelocity.y -= descendVelocityY;
 
-                            Collisions.slopeAngle = slopeAngle;
-                            Collisions.descendingSlope = true;
-                            Collisions.below = true;
+          //  RaycastHit2D maxSlopeHitLeft = Physics2D.Raycast(_raycastOrigins.bottomLeft, Vector2.down, Mathf.Abs(moveAmount.y) + SkinWidth, CollisionMask);
+           // RaycastHit2D maxSlopeHitRight = Physics2D.Raycast(_raycastOrigins.bottomRight, Vector2.down, Mathf.Abs(moveAmount.y) + SkinWidth, CollisionMask);
+           
+
+            float directionX = Mathf.Sign(moveAmount.x);
+            /**
+                Vector2 rayOrigin = (directionX == -1) ? _raycastOrigins.bottomRight : _raycastOrigins.bottomLeft;
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, -Vector2.up, Mathf.Infinity, CollisionMask);
+            /**/
+            Vector3 rayOrigin = (directionX == -1) ? _raycastOrigins.bottomRight : _raycastOrigins.bottomLeft;
+            RaycastHit hit;
+
+
+            if (Physics.Raycast(rayOrigin, -Vector3.up,out hit, Mathf.Infinity, CollisionMask))
+                {
+                    float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+                    if (slopeAngle != 0 && slopeAngle <= maxDescebdAbgle)
+                    {
+                        if (Mathf.Sign(hit.normal.x) == directionX)
+                        {
+                            if (Mathf.Sign(hit.normal.x) == directionX)
+                            {
+                                if (hit.distance - SkinWidth <=
+                                    Mathf.Tan(slopeAngle*Mathf.Deg2Rad)*Mathf.Abs(moveAmount.x))
+                                {
+                                    float moveDistance = Mathf.Abs(moveAmount.x);
+                                    float descendmoveAmountY = Mathf.Sin(slopeAngle*Mathf.Deg2Rad)*moveDistance;
+                                    moveAmount.x = Mathf.Cos(slopeAngle*Mathf.Deg2Rad)*moveDistance*
+                                                   Mathf.Sign(moveAmount.x);
+                                    moveAmount.y -= descendmoveAmountY;
+
+                                    Collisions.slopeAngle = slopeAngle;
+                                    Collisions.descendingSlope = true;
+                                    Collisions.below = true;
+                                    Collisions.slopeNormal = hit.normal;
+                                }
+                            }
                         }
-                    }
-                }
-            }
+                     }
+              }
         }
 
         void VerticalCollisions(ref Vector3 velocity)
@@ -159,22 +211,29 @@ namespace Assets.Scripts.Player
             float directionY = Mathf.Sign(velocity.y);
             float rayLength = Mathf.Abs(velocity.y) + SkinWidth;
 
+
             for (int i = 0; i < VerticalRayCount; i++)
             {
+                /**
+                Vector2 rayOrigin = (directionY == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.topLeft;
+                rayOrigin += Vector2.right * (_verticalRaySpacing * i + velocity.x);
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, CollisionMask);
+                /**/
+
                 Vector3 rayOrigin = (directionY == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.topLeft;
                 rayOrigin += Vector3.right * (_verticalRaySpacing * i + velocity.x);
-                // RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, CollisionMask);
-                RaycastHit hit;
-                Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.red);
+                RaycastHit hit ;
 
-                if ( Physics.Raycast(rayOrigin, Vector3.up * directionY * rayLength, out hit, rayLength, CollisionMask))
+                Debug.DrawRay(rayOrigin, Vector3.up * directionY, Color.red);
+
+                if (Physics.Raycast(rayOrigin, Vector3.up * directionY * 10, out hit,rayLength, CollisionMask))
                 {
                     velocity.y = (hit.distance - SkinWidth) * directionY;
                     rayLength = hit.distance;
 
                     if (Collisions.climbingSlope)
                     {
-                        velocity.x = velocity.y/Mathf.Tan(Collisions.slopeAngle*Mathf.Deg2Rad)*Mathf.Sign(velocity.x);
+                        velocity.x = velocity.y / Mathf.Tan(Collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Sign(velocity.x);
                     }
                     Collisions.below = directionY == -1;
                     Collisions.above = directionY == 1;
@@ -185,17 +244,24 @@ namespace Assets.Scripts.Player
             {
                 float directionX = Mathf.Sign(velocity.x);
                 rayLength = Mathf.Abs(velocity.x) + SkinWidth;
-                Vector2 rayOrigin = ((directionX == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.bottomRight) +
-                                    Vector2.up*velocity.y;
-                RaycastHit hit;
-                if (Physics.Raycast(rayOrigin, Vector3.right * directionX, out hit,rayLength, CollisionMask))
+                /**
+                Vector2 rayOrigin = ((directionX == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.bottomRight) + Vector2.up * velocity.y;
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, CollisionMask);
+                /**/
+                Vector3 rayOrigin = ((directionX == -1) ? _raycastOrigins.bottomLeft : _raycastOrigins.bottomRight) + Vector3.up * velocity.y;
+                RaycastHit hit ;
+
+                Debug.DrawRay(rayOrigin, Vector3.up * directionX , Color.yellow);
+
+                if (Physics.Raycast(rayOrigin, Vector3.right * directionX * 10,out hit, rayLength, CollisionMask))
                 {
-                    float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+                    float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 
                     if (slopeAngle != Collisions.slopeAngle)
                     {
-                        velocity.x = (hit.distance - SkinWidth)*directionX;
+                        velocity.x = (hit.distance - SkinWidth) * directionX;
                         Collisions.slopeAngle = slopeAngle;
+                        Collisions.slopeNormal = hit.normal;
                     }
                 }
             }
@@ -206,10 +272,10 @@ namespace Assets.Scripts.Player
             Bounds bounds = _collider.bounds;
             bounds.Expand(SkinWidth * -2);
 
-            _raycastOrigins.bottomLeft = new Vector2(bounds.min.x, bounds.min.y);
-            _raycastOrigins.bottomRight = new Vector2(bounds.max.x, bounds.min.y);
-            _raycastOrigins.topLeft = new Vector2(bounds.min.x, bounds.max.y);
-            _raycastOrigins.topRight = new Vector2(bounds.max.x, bounds.max.y);
+            _raycastOrigins.bottomLeft = new Vector3(bounds.min.x, bounds.min.y);
+            _raycastOrigins.bottomRight = new Vector3(bounds.max.x, bounds.min.y);
+            _raycastOrigins.topLeft = new Vector3(bounds.min.x, bounds.max.y);
+            _raycastOrigins.topRight = new Vector3(bounds.max.x, bounds.max.y);
         }
 
         void CalculateRaySpacing()
@@ -220,11 +286,11 @@ namespace Assets.Scripts.Player
             float boundWidth = bounds.size.x;
             float boundsHeight = bounds.size.y;
 
-            HorizontalRayCount = Mathf.RoundToInt(boundsHeight/dstBetweenRays);
+            HorizontalRayCount = Mathf.RoundToInt(boundsHeight / dstBetweenRays);
             VerticalRayCount = Mathf.RoundToInt(boundWidth / dstBetweenRays);
 
-          //  HorizontalRayCount = Mathf.Clamp(HorizontalRayCount, 2, int.MaxValue);
-         //   VerticalRayCount = Mathf.Clamp(VerticalRayCount, 2, int.MaxValue);
+            //  HorizontalRayCount = Mathf.Clamp(HorizontalRayCount, 2, int.MaxValue);
+            //   VerticalRayCount = Mathf.Clamp(VerticalRayCount, 2, int.MaxValue);
 
             _horizontalRaySpacing = bounds.size.y / (HorizontalRayCount - 1);
             _verticalRaySpacing = bounds.size.x / (VerticalRayCount - 1);
@@ -232,8 +298,8 @@ namespace Assets.Scripts.Player
 
         struct RaycastOrigins
         {
-            public Vector2 topLeft, topRight;
-            public Vector2 bottomLeft, bottomRight;
+            public Vector3 topLeft, topRight;
+            public Vector3 bottomLeft, bottomRight;
         }
 
         public struct CollisionInfo
@@ -244,8 +310,9 @@ namespace Assets.Scripts.Player
             public bool climbingSlope;
             public bool descendingSlope;
             public float slopeAngle, slopeAngleOld;
-            public Vector3 velocityOld;
-
+            public Vector3 slopeNormal;
+            public Vector3 moveAmountOld;
+            public int faceDir;
 
             public void Reset()
             {
@@ -253,10 +320,11 @@ namespace Assets.Scripts.Player
                 left = right = false;
                 climbingSlope = false;
                 descendingSlope = false;
+
+                slopeNormal = Vector3.zero;
                 slopeAngleOld = slopeAngle;
                 slopeAngle = 0;
             }
         }
-
-    }   
+    }
 }
