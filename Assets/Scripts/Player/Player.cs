@@ -6,7 +6,6 @@ namespace Assets
     [RequireComponent(typeof(Controller2D))]
     public class Player : MonoBehaviour
     {
-        public float turnSmoothTime = 0.2f;
         private float turnSmoothVelocity;
         public float MoveSpeed = 6;
         public float Gravity;
@@ -15,7 +14,6 @@ namespace Assets
         public float accelerationGrounded = 0.1f;
 
         public float MaxJumpVelocity;
-        public float MinJumpVelocity;
         public float MaxJumpHeight = 4;
         public float TimeToJumpApex = 0.4f;        //time takes to reach the highest jump
 
@@ -32,7 +30,7 @@ namespace Assets
         {
             _controller = GetComponent<Controller2D>();
 
-            Gravity = -(MaxJumpHeight) / Mathf.Pow(TimeToJumpApex, 2);
+            Gravity = -(2 * MaxJumpHeight) / Mathf.Pow(TimeToJumpApex, 2);
             MaxJumpVelocity = Mathf.Abs(Gravity) * TimeToJumpApex;
 
         }
@@ -67,7 +65,7 @@ namespace Assets
             }
 
             //if not moving on the slope
-            if (moveDirX == 0 && (_controller.Collisions.slopeAngle > 0 || _controller.Collisions.slopeAngle < 0))
+            if (moveDirX == 0 && (_controller.Collisions.slopeAngle > 0 || _controller.Collisions.slopeAngle < 0) && _controller.Collisions.below && input.x == 0)
             {
                 //animation of climbing
                 AnimationStates(false,false,false,false,true);
@@ -94,23 +92,17 @@ namespace Assets
                 //animations if not moving on ground. idle
                 AnimationStates(true, false, false, false, false);
             }
-
-            if (Input.GetKeyDown(KeyCode.Space) && _controller.Collisions.below)
+            
+            if (Input.GetKeyDown(KeyCode.Space) && _controller.Collisions.below && !_controller.Collisions.above )//&& input.x == 0)
             {
                 //add animation of jump
-                AnimationStates(false, false, true, false, false);
                 _velocity.y = MaxJumpVelocity;
+                AnimationStates(false, false, true, false, false);
+                
             }
 
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                if (_velocity.y > MinJumpVelocity)
-                {
-                    _velocity.y = MinJumpVelocity;
-                }
-            }
             //gliding animation
-            if (_velocity.x != 0 && _velocity.y != 0 && !_controller.Collisions.below)
+            if (_velocity.x != 0 && _velocity.y != 0 && !_controller.Collisions.below && !Input.GetKeyDown(KeyCode.Space))
             {
                 transform.Translate(Vector3.down * _velocity.x * Time.deltaTime);
                 //   _velocity.y = Mathf.Clamp(_velocity.y, maxVerticleSpeed, -maxVerticleSpeed);
@@ -125,13 +117,13 @@ namespace Assets
             _controller.Move(_velocity * Time.deltaTime, directionalInput);
         }
 
-        void AnimationStates(bool idleState, bool runningState, bool jumpingState, bool glidingState, bool idle_climState)
+        void AnimationStates(bool idleState, bool runningState, bool jumpingState, bool glidingState, bool idleClimState)
         {
             animator.SetBool("Idle", idleState);
             animator.SetBool("Jumping", jumpingState);
             animator.SetBool("Running", runningState);
             animator.SetBool("Glidin", glidingState);
-            animator.SetBool("Idle_Climb", idle_climState);
+            animator.SetBool("Idle_Climb", idleClimState);
 
             /**
             if (idleState)

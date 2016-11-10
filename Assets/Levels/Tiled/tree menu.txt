@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="350" height="100" tilewidth="1" tileheight="1" nextobjectid="31">
+ <objectgroup name="SliceTree5">
+  <object id="26" name="Tree5_Slice0" x="14" y="99">
+   <polygon points="0,0 7,-2 13,-4 17,-9 17,-23 18,-39 18,-50 17,-65 8,-67 0,-62 -10,-51 -4,-63 6,-70 18,-71 22,-77 17,-80 12,-85 -4,-95 13,-88 20,-82 26,-77 26,-72 29,-56 37,-62 42,-66 46,-67 50,-68 65,-70 58,-66 51,-65 47,-64 42,-62 38,-58 33,-52 31,-49 29,-34 29,-14 30,-11 33,-7 38,-3 43,-1 45,0"/>
+  </object>
+  <object id="27" name="Tree5_Slice1" x="19" y="99">
+   <polygon points="0,0 10,-3 14,-9 13,-26 14,-39 14,-58 13,-65 13,-67 5,-68 3,-68 -2,-65 2,-69 14,-70 18,-76 18,-78 12,-82 19,-78 20,-75 21,-66 22,-57 23,-54 35,-63 31,-57 26,-50 23,-38 23,-21 23,-10 30,-4 37,0"/>
+  </object>
+  <object id="28" name="Tree5_Slice2" x="27" y="99">
+   <polygon points="0,0 5,-4 8,-9 7,-27 7,-56 6,-68 10,-73 12,-58 14,-52 19,-55 17,-49 13,-37 14,-10 25,0"/>
+  </object>
+  <object id="29" name="Tree5_Slice3" x="32" y="99">
+   <polygon points="0,0 5,-9 3,-31 3,-65 5,-64 6,-57 8,-51 11,-52 8,-41 7,-28 8,-9 16,0"/>
+  </object>
+  <object id="30" name="Tree5_Slice4" x="35" y="99">
+   <polygon points="0,0 3,-8 1,-30 4,-7 10,0"/>
+  </object>
+ </objectgroup>
+</map>
