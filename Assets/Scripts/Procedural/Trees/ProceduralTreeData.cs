@@ -23,7 +23,7 @@ namespace Assets.Scripts.Procedural.Trees
             List<Polygon2D> tempPolys = new List<Polygon2D>();
             List<Vector3> relativeStartPositions = new List<Vector3>();
 
-            _startPosition = new Vector3(slices[0].X, TiledParsingHelper.TiledCompensator(slices[0].Y, LevelBuilder.MapSize.y), treesLayer * 5);
+            _startPosition = new Vector3(slices[0].X, TiledParsingHelper.TiledCompensator(slices[0].Y, LevelBuilder.MapSize.y), treesLayer - 0.5f/* * 5*/);
             _layerNumber = treesLayer;
             _name = name;
 
