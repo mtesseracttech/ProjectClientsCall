@@ -78,8 +78,7 @@ namespace Assets
         {
             float directionX = Mathf.Sign(velocity.x);
             float rayLength = Mathf.Abs(velocity.x) + SkinWidth;
-            print(rayLength);
-            
+
             if (Mathf.Abs(velocity.x) < SkinWidth)
             {
                 rayLength = 2 * SkinWidth;

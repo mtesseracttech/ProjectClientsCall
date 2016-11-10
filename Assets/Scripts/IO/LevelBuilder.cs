@@ -152,7 +152,7 @@ public class LevelBuilder : MonoBehaviour
                     if (layer.TmxObjects.Length > 1) Debug.Log("More than one player spawn was defined in the TMX Map");
                     else
                     {
-                        _playerSpawn = new Vector3(layer.TmxObjects[0].X, layer.TmxObjects[0].Y, 1);
+                        _playerSpawn = new Vector3(layer.TmxObjects[0].X, layer.TmxObjects[0].Y, 0);
                     }
                 }
             }
@@ -254,7 +254,7 @@ public class LevelBuilder : MonoBehaviour
                 {
                     foreach (var acorn in layer.TmxObjects)
                     {
-                        Vector3 acornPos = new Vector3(acorn.X, acorn.Y, 5);
+                        Vector3 acornPos = new Vector3(acorn.X, acorn.Y, 1);
                         GameObject instantiatedAcorn = Instantiate(AcornPrefab, acornPos, Quaternion.identity) as GameObject;
                         if (instantiatedAcorn != null)
                         {
