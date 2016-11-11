@@ -44,13 +44,6 @@ public class DarknessMovement : MonoBehaviour
     {
         transform.position = _data.Start();
         _moving = false;
-        //_renderer.enabled = false;
-        //_moving = false;
-
-        //_moving = true;
-        //float distanceToNest = Vector3.Distance(_data.Start(), _data.End());
-        //float speedTemp = distanceToNest / _data.GetStepsTillCenter();
-        //_movementSpeed = new Vector3(speedTemp, speedTemp, speedTemp);
     }
 
     void FixedUpdate()

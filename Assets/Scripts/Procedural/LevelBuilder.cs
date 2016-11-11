@@ -27,6 +27,10 @@ public class LevelBuilder : MonoBehaviour
     [Header("Other")]
     public GameObject Player;
 
+    //Event Handler(s)
+    public delegate void LevelRebuiltEventHandler();
+    public event LevelRebuiltEventHandler LevelRebuilt;
+
     //Data containers for the instantiated objects
     private List<TreeData> _treesData;
     private List<PlatformData> _platformsData;
@@ -352,32 +356,33 @@ public class LevelBuilder : MonoBehaviour
 	    if (Input.GetKeyDown(KeyCode.L))
 	    {
 	        RebuildLevel();
-	    }
+            OnLevelRebuilt(new EventArgs());
+        }
 	}
 
     //Is called when the tester wants to change the level on the fly and presses "L"
     private void RebuildLevel()
     {
-        DestroyAllGameData();
+        DestroyAllLevelData();
         Awake();
     }
 
 
     //Destroys all game objects in the level
     //TODO: ADDING THE NEW OBJECTS AND CHECKING FOR COMPLETION!!!
-    private void DestroyAllGameData()
+    private void DestroyAllLevelData()
     {
-        //Empty and Nullify Gameobject Lists
-        EmptyList(_platformsData);
-
-        EmptyList(_treesData);
-
         //Empty and Nullify other generated Data
+        EmptyList(_platformsData);
+        EmptyList(_treesData);
+        EmptyList(_darknessMovements);
+        EmptyList(_darknessPaths);
+
+        //Empty and Nullify Gameobject Lists
         DestroyGameObjectList(_platforms);
-
         DestroyGameObjectList(_trees);
-
         DestroyGameObjectList(_acorns);
+        DestroyGameObjectList(_darkness);
     }
 
     //Destroys all gameobjects in the given list
@@ -405,5 +410,13 @@ public class LevelBuilder : MonoBehaviour
     public List<DarknessMovement> GetDarknessEntities()
     {
         return _darknessMovements;
+    }
+
+    protected virtual void OnLevelRebuilt(EventArgs e)
+    {
+        if (LevelRebuilt != null)
+        {
+            LevelRebuilt();
+        }
     }
 }

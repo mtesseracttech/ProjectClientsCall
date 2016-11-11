@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -16,6 +17,7 @@ public class LevelObjectManager : MonoBehaviour
 	{
 	    _timeManager = TimeManager.GetComponent<TimeManager>();
 	    _levelBuilder = LevelBuilder.GetComponent<LevelBuilder>();
+        _levelBuilder.LevelRebuilt += OnLevelRebuilt;
 	    _darknessMovements = _levelBuilder.GetDarknessEntities();
         ManageDarkness();
 	}
@@ -33,9 +35,16 @@ public class LevelObjectManager : MonoBehaviour
         Debug.Log("Darkness Movement Speed: " + _darknessMovements[0].GetMovementSpeed());
     }
 
+    private void OnLevelRebuilt()
+    {
+        Start();
+    }
+
+
     // Update is called once per frame
     void Update()
     {
+        
     }
 
 }

@@ -50,7 +50,7 @@ public class HUDBehavior : MonoBehaviour
         _timeManager.enabled = false;
         yield return new WaitForSeconds(3f);
         _timeManager.enabled = true;
-        RotateClock();
+        if(!_timeManager.IsDayOver()) RotateClock();
     }
 
     void RotateClock()

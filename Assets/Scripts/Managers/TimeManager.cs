@@ -5,18 +5,27 @@ public class TimeManager : MonoBehaviour
 {
     public int TotalDays;
     public int TotalTimePerDay;
+    public GameObject LevelBuilder;
     private int _currentDay;
     private float _currentTime;
     private float _timeAccumulator;
     private float _currentTimeUnclipped;
+    private LevelBuilder _levelBuilder;
 
 	// Use this for initialization
 	void Awake ()
 	{
 	    _currentDay = -1;
 	    _currentTime = 0.0f;
+	    _levelBuilder = LevelBuilder.GetComponent<LevelBuilder>();
+	    _levelBuilder.LevelRebuilt += OnLevelRebuilt;
 	}
-	
+
+    private void OnLevelRebuilt()
+    {
+        NewDay(_currentDay);
+    }
+
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
@@ -28,10 +37,12 @@ public class TimeManager : MonoBehaviour
 	        _timeAccumulator -= 1.0f;
 	    }
 
+        /*
 	    string DebugString = 
             "Unclipped Time: " + _currentTimeUnclipped + "\n" +
             "Clipped Time: " + _currentTime;
         Debug.Log(DebugString);
+        */
 	}
 
     private void Ticker()
