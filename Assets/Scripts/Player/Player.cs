@@ -30,13 +30,15 @@ namespace Assets
         {
             _controller = GetComponent<Controller2D>();
 
-            Gravity = -(2 * MaxJumpHeight) / Mathf.Pow(TimeToJumpApex, 2);
-            MaxJumpVelocity = Mathf.Abs(Gravity) * TimeToJumpApex;
+           
 
         }
 
         void Update()
         {
+            Gravity = -(2 * MaxJumpHeight) / Mathf.Pow(TimeToJumpApex, 2);
+            MaxJumpVelocity = Mathf.Abs(Gravity) * TimeToJumpApex;
+
             if (_controller.Collisions.above || _controller.Collisions.below)
             {
                 _velocity.y = 0;
@@ -65,14 +67,14 @@ namespace Assets
             }
 
             //if not moving on the slope
-            if (moveDirX == 0 && (_controller.Collisions.slopeAngle > 0 || _controller.Collisions.slopeAngle < 0) && _controller.Collisions.below && input.x == 0)
+            if (moveDirX == 0.0f && (_controller.Collisions.slopeAngle > 0 || _controller.Collisions.slopeAngle < 0) && _controller.Collisions.below && input.x == 0.0f)
             {
                 //animation of climbing
                 AnimationStates(false,false,false,false,true);
             }
 
             //if going down the slope
-            if (moveDirX != 0 && !_controller.Collisions.climbingSlope && _controller.Collisions.descendingSlope)
+            if (moveDirX != 0.0f && !_controller.Collisions.climbingSlope && _controller.Collisions.descendingSlope)
             {
               
                 if (moveDirX < 0)
@@ -82,7 +84,7 @@ namespace Assets
             }
 
             //animation of running if bellow is true
-            if (input.x != 0 && _controller.Collisions.below && !Input.GetKeyDown(KeyCode.Space))
+            if (input.x != 0.0f && _controller.Collisions.below && !Input.GetKeyDown(KeyCode.Space))
             {
                 //animations of running
                 AnimationStates(false, true, false, false, false);
@@ -96,7 +98,7 @@ namespace Assets
             if (Input.GetKeyDown(KeyCode.Space) && _controller.Collisions.below && !_controller.Collisions.above )//&& input.x == 0)
             {
                 //add animation of jump
-                _velocity.y = MaxJumpVelocity;
+                _velocity.y = MaxJumpVelocity; 
                 AnimationStates(false, false, true, false, false);
                 
             }
@@ -104,9 +106,10 @@ namespace Assets
             //gliding animation
             if (_velocity.x != 0 && _velocity.y != 0 && !_controller.Collisions.below && !Input.GetKeyDown(KeyCode.Space))
             {
-                transform.Translate(Vector3.down * _velocity.x * Time.deltaTime);
-                //   _velocity.y = Mathf.Clamp(_velocity.y, maxVerticleSpeed, -maxVerticleSpeed);
-
+                Gravity /= 2;
+              
+               //   _velocity.y = Mathf.Clamp(_velocity.y, maxVerticleSpeed, -maxVerticleSpeed);
+                
                 AnimationStates(false, false, false, true, false);
 
             }
