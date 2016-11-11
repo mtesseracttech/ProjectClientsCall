@@ -17,13 +17,10 @@ namespace Assets.Scripts.Procedural.Trees
         public ProceduralTreeData(List<TmxObject> slices, int treesLayer, string name)
         {
             slices = SortSlices(slices);
-
-
-            //Debug.Log("NEW Procedural Tree Data (" + slices[0].Id + ")");
             List<Polygon2D> tempPolys = new List<Polygon2D>();
             List<Vector3> relativeStartPositions = new List<Vector3>();
 
-            _startPosition = new Vector3(slices[0].X, TiledParsingHelper.TiledCompensator(slices[0].Y, LevelBuilder.MapSize.y), treesLayer - 0.5f/* * 5*/);
+            _startPosition = new Vector3(slices[0].X, TiledParsingHelper.TiledCompensator(slices[0].Y, LevelBuilder.MapSize.y), treesLayer - 0.5f);
             _layerNumber = treesLayer;
             _name = name;
 
@@ -33,7 +30,7 @@ namespace Assets.Scripts.Procedural.Trees
                     new Vector3(
                         slices[i].X - _startPosition.x,
                         slices[i].Y - _startPosition.y,
-                        ((i * SliceThickness) + SliceThickness/2/* - _startPosition.z*/))
+                        ((i * SliceThickness) + SliceThickness/2))
                 );
             }
 
@@ -49,10 +46,6 @@ namespace Assets.Scripts.Procedural.Trees
 
             _slices = tempPolys.ToArray();
             _relativeStartPositions = relativeStartPositions.ToArray();
-            //Debug.Log("Layer Number: " + _layerNumber);
-            //Debug.Log("Start Position" + _startPosition);
-            //Utility.DebugArray(_slices, "Slices:");
-            //Utility.DebugArray(_relativeStartPositions, "Relative Start Positions:");
         }
 
         private List<TmxObject> SortSlices(List<TmxObject> slices)

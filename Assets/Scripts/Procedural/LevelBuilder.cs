@@ -202,7 +202,6 @@ public class LevelBuilder : MonoBehaviour
 
                 List<TmxObject> tree = new List<TmxObject>();
 
-
                 foreach (var slice in layer.TmxObjects)
                 {
                     string[] nameParts = slice.Name.Split('_');
