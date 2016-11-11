@@ -254,7 +254,7 @@ public class LevelBuilder : MonoBehaviour
                 {
                     foreach (var acorn in layer.TmxObjects)
                     {
-                        Vector3 acornPos = new Vector3(acorn.X, acorn.Y, 1);
+                        Vector3 acornPos = new Vector3(acorn.X, acorn.Y, 0);
                         GameObject instantiatedAcorn = Instantiate(AcornPrefab, acornPos, Quaternion.identity) as GameObject;
                         if (instantiatedAcorn != null)
                         {
