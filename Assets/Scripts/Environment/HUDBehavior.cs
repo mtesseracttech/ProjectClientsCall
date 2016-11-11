@@ -34,7 +34,7 @@ public class HUDBehavior : MonoBehaviour
     {
          StartNewDay();
 
-        if (!_timeManager.DayOver())
+        if (!_timeManager.IsDayOver())
         {
             StartCoroutine(StartClock());
         }
@@ -64,7 +64,7 @@ public class HUDBehavior : MonoBehaviour
 
     void StartNewDay()
     {
-        if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(1))
+        if (!_timeManager.IsDayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(1))
         {
             _textDayPassUpdate.text = "Day 2";
            // StartCoroutine(DayHasPassedScreen());
@@ -73,7 +73,7 @@ public class HUDBehavior : MonoBehaviour
             _inventory.acornCount = 0;
             _inventory.SetDay(1, false);
         }
-        else if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(2))
+        else if (!_timeManager.IsDayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(2))
         {
             _textDayPassUpdate.text = "Day 3";
           //  StartCoroutine(DayHasPassedScreen());
@@ -82,7 +82,7 @@ public class HUDBehavior : MonoBehaviour
             _inventory.acornCount = 0;
             _inventory.SetDay(2, false);
         }
-        else if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(3))
+        else if (!_timeManager.IsDayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(3))
         {
             _textDayPassUpdate.text = "Day 4";
           //  StartCoroutine(DayHasPassedScreen());
@@ -91,7 +91,7 @@ public class HUDBehavior : MonoBehaviour
             _inventory.acornCount = 0;
             _inventory.SetDay(3, false);
         }
-        else if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(4))
+        else if (!_timeManager.IsDayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(4))
         {
             _textDayPassUpdate.text = "Day 5";
           //  StartCoroutine(DayHasPassedScreen());
@@ -100,7 +100,7 @@ public class HUDBehavior : MonoBehaviour
             _inventory.acornCount = 0;
             _inventory.SetDay(4, false);
         }
-        else if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(5))
+        else if (!_timeManager.IsDayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(5))
         {
             print("win");
             StartCoroutine(WinScreen());
