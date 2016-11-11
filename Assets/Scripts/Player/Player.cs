@@ -67,7 +67,7 @@ namespace Assets
             }
 
             //if not moving on the slope
-            if (moveDirX == 0.0f && (_controller.Collisions.slopeAngle > 0 || _controller.Collisions.slopeAngle < 0) && _controller.Collisions.below && input.x == 0.0f)
+            if (moveDirX == 0.0f && (_controller.Collisions.climbingSlope || _controller.Collisions.descendingSlope ) && _controller.Collisions.below && input.x == 0.0f)
             {
                 //animation of climbing
                 AnimationStates(false,false,false,false,true);
