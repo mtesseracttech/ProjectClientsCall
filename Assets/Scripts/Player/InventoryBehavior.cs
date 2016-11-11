@@ -24,7 +24,6 @@ public class InventoryBehavior : MonoBehaviour
     {
         UpdateAcornPerDay();
         CheckInventory();
-        print(_MaxAcornAmount);
     }
 
     void OnTriggerEnter(Collider other)
@@ -80,7 +79,7 @@ public class InventoryBehavior : MonoBehaviour
 
     public void SetDay(int day, bool state)
     {
-        if (day >= _days.Length || day < 0) return;
+        if (day > _days.Length || day < 0) return;
         _days[day - 1] = state;
     }
 
