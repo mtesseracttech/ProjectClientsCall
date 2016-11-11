@@ -43,16 +43,17 @@ public class DarknessMovement : MonoBehaviour
     private void SetStart()
     {
         transform.position = _data.Start();
+        _moving = false;
         //_renderer.enabled = false;
         //_moving = false;
 
-        _moving = true;
-        float distanceToNest = Vector3.Distance(_data.Start(), _data.End());
-        float speedTemp = distanceToNest / _data.GetStepsTillCenter();
-        _movementSpeed = new Vector3(speedTemp, speedTemp, speedTemp);
+        //_moving = true;
+        //float distanceToNest = Vector3.Distance(_data.Start(), _data.End());
+        //float speedTemp = distanceToNest / _data.GetStepsTillCenter();
+        //_movementSpeed = new Vector3(speedTemp, speedTemp, speedTemp);
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (_moving)
         {
@@ -64,6 +65,24 @@ public class DarknessMovement : MonoBehaviour
                 transform.position = transform.position - _pathToGo;
             }
         }
+    }
+
+    public void SetTotalTravelTime(float timeInSeconds)
+    {
+        float distanceToNest = Vector3.Distance(_data.Start(), _data.End());
+        float travelPerSecond = distanceToNest/timeInSeconds;
+        float travelPerUpdate = travelPerSecond/60;
+        _movementSpeed = new Vector3(travelPerUpdate, travelPerUpdate, travelPerUpdate);
+    }
+
+    public float GetMovementSpeed()
+    {
+        return _movementSpeed.x;
+    }
+
+    public DarknessData GetData()
+    {
+        return _data;
     }
 
     public void StartMoving()

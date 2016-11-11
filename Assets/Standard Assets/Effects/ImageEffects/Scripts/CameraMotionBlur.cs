@@ -68,7 +68,7 @@ namespace UnityStandardAssets.ImageEffects
 			Matrix4x4 viewMat = _camera.worldToCameraMatrix;
             Matrix4x4 projMat = GL.GetGPUProjectionMatrix (_camera.projectionMatrix, true);
             currentViewProjMat = projMat * viewMat;
-
+            /*
 			if(_camera.stereoEnabled)
 			{
 				for (int eye = 0; eye < 2; ++eye)
@@ -79,6 +79,7 @@ namespace UnityStandardAssets.ImageEffects
 					currentStereoViewProjMat[eye] = stereoProjMat * stereoViewMat;
 				}
 			}
+            */
         }
 
 

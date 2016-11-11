@@ -8,6 +8,7 @@ public class TimeManager : MonoBehaviour
     private int _currentDay;
     private float _currentTime;
     private float _timeAccumulator;
+    private float _currentTimeUnclipped;
 
 	// Use this for initialization
 	void Awake ()
@@ -19,8 +20,9 @@ public class TimeManager : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-	    _timeAccumulator += Time.deltaTime;
-	    if (_timeAccumulator >= 1.0f)
+        _currentTimeUnclipped += Time.deltaTime;
+        _timeAccumulator += Time.deltaTime;
+        if (_timeAccumulator >= 1.0f)
 	    {
 	        Ticker();
 	        _timeAccumulator -= 1.0f;
@@ -46,10 +48,16 @@ public class TimeManager : MonoBehaviour
         return _currentTime;
     }
 
+    public float GetUnclippedTime()
+    {
+        return _currentTimeUnclipped;
+    }
+
     public void NewDay(int day)
     {
         _currentDay = day;
         _currentTime = 0;
+        _currentTimeUnclipped = 0;
     }
 
     public void NextDay()
@@ -66,7 +74,7 @@ public class TimeManager : MonoBehaviour
         return TotalTimePerDay - _currentTime;
     }
 
-    public bool DayOver()
+    public bool IsDayOver()
     {
         if (TimeLeft() > 0)
         {

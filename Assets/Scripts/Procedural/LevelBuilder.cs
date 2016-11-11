@@ -44,16 +44,17 @@ public class LevelBuilder : MonoBehaviour
     //Other Data Containers
     private TmxMap _map;
     private Vector3 _playerSpawn;
+    private List<DarknessMovement> _darknessMovements;
 
     //Other information
     public static Vector2 MapSize;
 
 
     //Initialization
-    void Start ()
+    void Awake ()
 	{
 	    CreateLevel();
-	    DebugLevel();
+	    //DebugLevel();
 	}
 
 
@@ -136,6 +137,13 @@ public class LevelBuilder : MonoBehaviour
             {
                 instantiatedDarkness.SendMessage("Create", path);
             }
+        }
+
+        _darknessMovements = new List<DarknessMovement>();
+
+        foreach (var darkness in _darkness)
+        {
+            _darknessMovements.Add(darkness.GetComponent<DarknessMovement>());
         }
     }
 
@@ -351,7 +359,7 @@ public class LevelBuilder : MonoBehaviour
     private void RebuildLevel()
     {
         DestroyAllGameData();
-        Start();
+        Awake();
     }
 
 
@@ -392,5 +400,10 @@ public class LevelBuilder : MonoBehaviour
         {
             list.RemoveRange(0, list.Count - 1);
         }
+    }
+
+    public List<DarknessMovement> GetDarknessEntities()
+    {
+        return _darknessMovements;
     }
 }
