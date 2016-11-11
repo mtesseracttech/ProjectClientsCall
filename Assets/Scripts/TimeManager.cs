@@ -27,6 +27,11 @@ public class TimeManager : MonoBehaviour
 	        Ticker();
 	        _timeAccumulator -= 1.0f;
 	    }
+
+	    string DebugString = 
+            "Unclipped Time: " + _currentTimeUnclipped + "\n" +
+            "Clipped Time: " + _currentTime;
+        Debug.Log(DebugString);
 	}
 
     private void Ticker()

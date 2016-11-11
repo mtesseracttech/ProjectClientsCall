@@ -36,7 +36,6 @@ public class LevelObjectManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(_darknessMovements[0].transform.position);
     }
 
 }
