@@ -6,22 +6,20 @@ using UnityEngine.UI;
 public class HUDBehavior : MonoBehaviour
 {
     public float DurationOfDay;
-    private float _timeLeft;
-    private Image _arrowImage;
-    private bool dayPassed;
-    private Animator UIdayPass;
-    private Text textDayPassUpdate;
-    public GameObject gameOver;
+    public GameObject GameOver;
     public GameObject TimeManager;
-    private TimeManager _timeManager;
+    private Animator _uIdayPass;
     private InventoryBehavior _inventory;
+    private Image _arrowImage;
+    private Text _textDayPassUpdate;
+    private TimeManager _timeManager;
 
     void Awake()
     {
         _arrowImage = GameObject.FindGameObjectWithTag("UIarrow").GetComponent<Image>();
         _inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<InventoryBehavior>();
-        UIdayPass = GameObject.FindGameObjectWithTag("DayChange").GetComponent<Animator>();
-        textDayPassUpdate = GameObject.FindGameObjectWithTag("DayChangeUI").GetComponent<Text>();
+        _uIdayPass = GameObject.FindGameObjectWithTag("DayChange").GetComponent<Animator>();
+        _textDayPassUpdate = GameObject.FindGameObjectWithTag("DayChangeUI").GetComponent<Text>();
         _timeManager = TimeManager.GetComponent<TimeManager>();
     }
 
@@ -49,7 +47,7 @@ public class HUDBehavior : MonoBehaviour
     IEnumerator StartClock()
     {
         _timeManager.enabled = false;
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(3f);
         _timeManager.enabled = true;
         RotateClock();
     }
@@ -68,48 +66,50 @@ public class HUDBehavior : MonoBehaviour
     {
         if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(1))
         {
-            textDayPassUpdate.text = "Day 2";
-            StartCoroutine(DayHasPassedScreen());
+            _textDayPassUpdate.text = "Day 2";
+           // StartCoroutine(DayHasPassedScreen());
             print("first day passed");
             _inventory.SetDay(2,true);
-            dayPassed = true;
             _inventory.acornCount = 0;
+            _inventory.SetDay(1, false);
         }
         else if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(2))
         {
-            textDayPassUpdate.text = "Day 3";
-            StartCoroutine(DayHasPassedScreen());
+            _textDayPassUpdate.text = "Day 3";
+          //  StartCoroutine(DayHasPassedScreen());
             print("second day passed");
             _inventory.SetDay(3, true);
-            dayPassed = true;
             _inventory.acornCount = 0;
+            _inventory.SetDay(2, false);
         }
         else if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(3))
         {
-            textDayPassUpdate.text = "Day 4";
-            StartCoroutine(DayHasPassedScreen());
+            _textDayPassUpdate.text = "Day 4";
+          //  StartCoroutine(DayHasPassedScreen());
             print("third day passed");
             _inventory.SetDay(4, true);
-            dayPassed = true;
             _inventory.acornCount = 0;
+            _inventory.SetDay(3, false);
+        }
+        else if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(4))
+        {
+            _textDayPassUpdate.text = "Day 5";
+          //  StartCoroutine(DayHasPassedScreen());
+            _inventory.SetDay(5, true);
+            print("forth day passed");
+            _inventory.acornCount = 0;
+            _inventory.SetDay(4, false);
         }
         else if (!_timeManager.DayOver() && _inventory.InventoryFull && _inventory.InTheNest && _inventory.GetDay(5))
         {
-            textDayPassUpdate.text = "Day 5";
-            StartCoroutine(DayHasPassedScreen());
-            dayPassed = true;
-            print("forth day passed");
-            _inventory.acornCount = 0;
-        }
-        else
-        {      
-            dayPassed = false;
+            print("win");
+            StartCoroutine(WinScreen());
         }
     }
 
     IEnumerator GameOverScreen()
     {
-        gameOver.SetActive(true); 
+        GameOver.SetActive(true); 
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene(0);
     }
@@ -118,12 +118,13 @@ public class HUDBehavior : MonoBehaviour
     {
 
         yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene(0);
     }
 
     IEnumerator DayHasPassedScreen()
     {
-        UIdayPass.enabled = true;
+        _uIdayPass.enabled = true;
         yield return new WaitForSeconds(4f);
-        UIdayPass.enabled = false;
+        _uIdayPass.enabled = false;
     }
 }

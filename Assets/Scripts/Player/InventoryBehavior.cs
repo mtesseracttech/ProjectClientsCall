@@ -20,15 +20,11 @@ public class InventoryBehavior : MonoBehaviour
         SetDay(1,true);
     }
 
-    void FixedUpdate()
-    {
-        print("acorn nedded " + _MaxAcornAmount);
-    }
-
     void Update()
     {
         UpdateAcornPerDay();
         CheckInventory();
+        print(_MaxAcornAmount);
     }
 
     void OnTriggerEnter(Collider other)
@@ -36,11 +32,14 @@ public class InventoryBehavior : MonoBehaviour
         //if tag is player and have enough acorn can come in and start next day
         if (other.gameObject.CompareTag("nest") && InventoryFull)
         {
-            print("we are in the nest");
             //start next day
             //transition to the next day
             //fade out fade in
             InTheNest = true;
+        }
+        else
+        {
+            InTheNest = false;
         }
     }
 
@@ -71,12 +70,12 @@ public class InventoryBehavior : MonoBehaviour
 
     void CheckInventory()
     {
-        if (acornCount == _MaxAcornAmount)
+        if (_MaxAcornAmount == acornCount)
         {
             InventoryFull = true;
         }
-        else InventoryFull = false;
-    
+        else
+            InventoryFull = false;
     }
 
     public void SetDay(int day, bool state)

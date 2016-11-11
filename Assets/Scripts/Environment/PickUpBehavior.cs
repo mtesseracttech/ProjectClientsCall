@@ -30,35 +30,36 @@ public class PickUpBehavior : MonoBehaviour {
             acornPickup = true;
             Destroy(gameObject);
         }
-        else acornPickup = false;
+        else
+            acornPickup = false;
 
     }
 
     void ResetImage()
     {
-        if (_acornImage.fillAmount == 1f )
+        if (_acornImage.fillAmount >= 1f)
         {
             AcornFull = true;
         }
         else AcornFull = false;
 
-        if(AcornFull && _inventory.GetDay(1) && acornPickup)
+        if(AcornFull && _inventory.GetDay(1) && _inventory.InTheNest)
         {
            _acornImage.fillAmount = 0f;
         }
-        else if (AcornFull && _inventory.GetDay(2) && acornPickup)
+        else if (AcornFull && _inventory.GetDay(2) && _inventory.InTheNest)
         {
             _acornImage.fillAmount = 0f;
         }
-        else if (AcornFull && _inventory.GetDay(3) && acornPickup)
+        else if (AcornFull && _inventory.GetDay(3) && _inventory.InTheNest)
         {
             _acornImage.fillAmount = 0f;
         }
-        else if (AcornFull && _inventory.GetDay(4) && acornPickup)
+        else if (AcornFull && _inventory.GetDay(4) && _inventory.InTheNest)
         {
             _acornImage.fillAmount = 0f;
         }
-        else if (AcornFull && _inventory.GetDay(5) && acornPickup)
+        else if (AcornFull && _inventory.GetDay(5) && _inventory.InTheNest)
         {
             _acornImage.fillAmount = 0f;
         }
